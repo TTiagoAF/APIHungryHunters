@@ -283,7 +283,7 @@ public class ContasController : ControllerBase
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-[HttpPut("UpdateConta/{id}")]
+    [HttpPut("UpdateConta/{id}")]
     public async Task<ActionResult> UpdateConta(int id, [FromBody] ContasDTO contasDTO)
     {
         try

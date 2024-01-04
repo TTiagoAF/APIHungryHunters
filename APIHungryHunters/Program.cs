@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using APIHungryHunters.Models;
 using System.Text;
+using System.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddSingleton(builder.Configuration);
+
 var key = Encoding.ASCII.GetBytes("dsogjreugh-jhsslçfkrejHJHFuyu.HGhjfguweoqdndsgkj,uyefygweydgwytcGDFD.fiufh");
 
 builder.Services.AddAuthentication(x =>
@@ -32,14 +35,17 @@ builder.Services.AddAuthentication(x =>
 })
 .AddJwtBearer(x =>
 {
-    x.RequireHttpsMetadata = false;
+    var configuration = builder.Configuration;
+    x.RequireHttpsMetadata = true;
     x.SaveToken = true;
     x.TokenValidationParameters = new TokenValidationParameters
     {
         ValidateIssuerSigningKey = true,
         IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false
+        ValidateIssuer = true,
+        ValidIssuer = configuration.GetSection("Jwt:Issuer").Value,
+        ValidateAudience = true,
+        ValidAudience = configuration.GetSection("Jwt:Audience").Value
     };
 });
 
