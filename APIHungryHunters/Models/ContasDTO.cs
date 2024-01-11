@@ -2,7 +2,7 @@
 {
     public class ContasDTO
     {
-        public long Id_conta { get; set; }
+        public int Id_conta { get; set; }
         public string Email { get; set; }
         public string Username { get; set; }
         public DateTime datadenascimento { get; set; }

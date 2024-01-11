@@ -8,7 +8,10 @@ using System.Configuration;
 var builder = WebApplication.CreateBuilder(args);
 
 // Adiciona serviços ao container.
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+{
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+});
 builder.Services.AddDbContext<TodoContext>(opt =>
     opt.UseInMemoryDatabase("ContasList"));
 builder.Services.AddEndpointsApiExplorer();
@@ -48,7 +51,6 @@ builder.Services.AddAuthentication(x =>
         ValidAudience = configuration.GetSection("Jwt:Audience").Value
     };
 });
-
 
 var app = builder.Build();
 
