@@ -102,6 +102,79 @@ namespace APIHungryHunters.Controllers
                 return Ok(restaurantesDTO);
             }
         }
+        [HttpPost("AdicionarRestaurante")]
+        public async Task<ActionResult> AddRestaurante([FromBody] List<RestaurantesDTO> restaurantesDTOs)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<RestaurantesDTO, Restaurantes>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                foreach (var restaurantesDTO in restaurantesDTOs)
+                {
+                    var restaurantes = await db.FirstOrDefaultAsync<string>("SELECT Nipc FROM empresa WHERE Nipc = @Nipc", new { Nipc = restaurantesDTO.NipcEmpresa });
+                    if (string.IsNullOrEmpty(restaurantes))
+                    {
+                        return NotFound($"Não foi encontrada nenhuma Empresa com esse Nipc: {restaurantesDTO.NipcEmpresa}. Insira outro Nipc.");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(restaurantesDTO.Nome))
+                    {
+                        var erro1 = new { Mensagem = "Preencha a razão social" };
+                        return BadRequest(erro1);
+                    }
+                    
+                    var existingNome = await db.FirstOrDefaultAsync<string>("SELECT Nome FROM restaurantes WHERE Nome = @Nome", new { Nome = restaurantesDTO.Nome });
+                    if (!string.IsNullOrEmpty(existingNome))
+                    {
+                        var erro1 = new { Mensagem = "Este Razão Social já está a ser utilizado." };
+                        return BadRequest(erro1);
+                    }
+
+                    if (restaurantesDTO.PrecoMedio <= 0)
+                    {
+                        var erro4 = new { Mensagem = "Preço inválido." };
+                        return BadRequest(erro4);
+                    }
+
+                    if (restaurantesDTO.NumeroMesas <= 0)
+                    {
+                        var erro1 = new { Mensagem = "Adicione o número de mesas" };
+                        return BadRequest(erro1);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(restaurantesDTO.Distrito))
+                    {
+                        var erro1 = new { Mensagem = "Distrito inválido" };
+                        return BadRequest(erro1);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(restaurantesDTO.Coordenadas))
+                    {
+                        var erro1 = new { Mensagem = "Coordenadas inválido" };
+                        return BadRequest(erro1);
+                    }
+
+                    if (string.IsNullOrWhiteSpace(restaurantesDTO.Descricao))
+                    {
+                        var erro1 = new { Mensagem = "Descrição inválido" };
+                        return BadRequest(erro1);
+                    }
+                    if (restaurantesDTO.CapacidadeGrupo <= 0)
+                    {
+                        var erro1 = new { Mensagem = "Adicione o número de capacidade por grupo" };
+                        return BadRequest(erro1);
+                    }
+
+                    var novoRestaurante = mapper.Map<Restaurantes>(restaurantesDTO);
+                    await db.InsertAsync("restaurantes", "Id_restaurante", true, novoRestaurante);
+                }
+            }
+            return Ok();
+        }
 
         [HttpGet("ObterIdDoRestaurantePorEmail")]
         public int? ObterIdDoRestaurantePorEmail(string email)

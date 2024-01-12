@@ -8,7 +8,6 @@ namespace APIHungryHunters.Models
         public int Id_restaurante { get; set; }
         public string NipcEmpresa { get; set; }
         [ForeignKey("NipcEmpresa")]
-        public virtual EmpresasDTO Empresas { get; set; }
         public string Nome { get; set; }
         public Decimal PrecoMedio { get; set; }
         public int NumeroMesas { get; set; }

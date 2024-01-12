@@ -105,15 +105,11 @@ namespace APIHungryHunters.Controllers
         }
 
         [HttpGet("Empresaspor{Razao_social}")]
-        public async Task<ActionResult<IEnumerable<TodasEmpresasDTO>>> GetEmpresasNome(string Razao_social)
+        public async Task<ActionResult<IEnumerable<EmpresasDTO>>> GetEmpresasNome(string Razao_social)
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Empresas, TodasEmpresasDTO>();
-
-                cfg.CreateMap<Restaurantes, RestaurantesDTO>();
-
-                cfg.CreateMap<RestauranteMenu, RestauranteMenuDTO>();
+                cfg.CreateMap<Empresas, EmpresasDTO>();
             });
             AutoMapper.IMapper mapper = config.CreateMapper();
 
@@ -145,7 +141,7 @@ namespace APIHungryHunters.Controllers
             {
                 foreach (var empresasDTO in empresasDTOs)
                 {
-                    if(empresasDTO.Nipc.IndexOf("0") == 0 || empresasDTO.Nipc.IndexOf("4") == 0 || empresasDTO.Nipc.IndexOf("7") == 0 || empresasDTO.Nipc.IndexOf("8") == 0 || empresasDTO.Nipc.Length != 9 || string.IsNullOrWhiteSpace(empresasDTO.Nipc))
+                    if (empresasDTO.Nipc.IndexOf("0") == 0 || empresasDTO.Nipc.IndexOf("4") == 0 || empresasDTO.Nipc.IndexOf("7") == 0 || empresasDTO.Nipc.IndexOf("8") == 0 || empresasDTO.Nipc.Length != 9 || string.IsNullOrWhiteSpace(empresasDTO.Nipc))
                     {
                         var erro1 = new { Mensagem = "Nipc inválido" };
                         return BadRequest(erro1);
@@ -157,7 +153,7 @@ namespace APIHungryHunters.Controllers
                         var erro1 = new { Mensagem = "Este Nipc já está a ser utilizado." };
                         return BadRequest(erro1);
                     }
-                    
+
                     if (string.IsNullOrWhiteSpace(empresasDTO.Razao_social))
                     {
                         var erro1 = new { Mensagem = "Preencha a razão social" };
@@ -185,7 +181,7 @@ namespace APIHungryHunters.Controllers
                         return BadRequest(erro1);
                     }
 
-                    if(empresasDTO.Num_Restaurante <= 0)
+                    if (empresasDTO.Num_Restaurante <= 0)
                     {
                         var erro1 = new { Mensagem = "Adicione o número de restaurantes" };
                         return BadRequest(erro1);
@@ -239,8 +235,20 @@ namespace APIHungryHunters.Controllers
                     return Unauthorized(naoautorizado2);
                 }
             }
+            var razaosocial = ObterRazaoSocial(loginEmpresasDTO.Nipc);
             var token = GenerateJwtToken(loginEmpresasDTO.Nipc);
-            return Ok(new { Token = token });
+            return Ok(new { Token = token, Razao = razaosocial});
+        }
+
+        [HttpGet("ObterRazaoSocial")]
+        public string ObterRazaoSocial(string nipc)
+        {
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var usuario = db.FirstOrDefault<Empresas>("SELECT Razao_social FROM empresa WHERE Nipc = @0", nipc);
+
+                return usuario.Razao_social;
+            }
         }
 
         private string GenerateJwtToken(string nipc)
@@ -262,6 +270,74 @@ namespace APIHungryHunters.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        [HttpPost("MaisRestaurante/{Razao_social}")]
+        public async Task<ActionResult> MaisRestaurante(string Razao_social)
+        {
+            try
+            {
+                // Conexão com o banco de dados
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    // Consulta o brinquedo pelo ID
+                    var brinquedo = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Razao_social = @0", Razao_social);
+
+                    // Verifica se o brinquedo foi encontrado
+                    if (brinquedo == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {Razao_social}. Insira outro Id.");
+                    }
+
+                    // Atualiza a quantidade e vendas totais do brinquedo
+                    brinquedo.Num_Restaurante += 1;
+
+                    // Atualiza o brinquedo na tabela brinquedos
+                    await db.UpdateAsync("empresa", "Razao_social", brinquedo);
+
+                    // Retorna uma resposta sem conteúdo
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Retorna uma resposta de erro interno do servidor
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar a quantidade e vendas totais do brinquedo");
+            }
+        }
+
+        [HttpPost("MenosRestaurante/{Razao_social}")]
+        public async Task<ActionResult> MenosRestaurante(string Razao_social)
+        {
+            try
+            {
+                // Conexão com o banco de dados
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    // Consulta o brinquedo pelo ID
+                    var brinquedo = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Razao_social = @0", Razao_social);
+
+                    // Verifica se o brinquedo foi encontrado
+                    if (brinquedo == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {Razao_social}. Insira outro Id.");
+                    }
+
+                    // Atualiza a quantidade e vendas totais do brinquedo
+                    brinquedo.Num_Restaurante -= 1;
+
+                    // Atualiza o brinquedo na tabela brinquedos
+                    await db.UpdateAsync("empresa", "Razao_social", brinquedo);
+
+                    // Retorna uma resposta sem conteúdo
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                // Retorna uma resposta de erro interno do servidor
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar a quantidade e vendas totais do brinquedo");
+            }
         }
 
         private bool EmpresasExists(string nipc)
