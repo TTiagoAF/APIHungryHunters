@@ -79,8 +79,32 @@ namespace APIHungryHunters.Controllers
             }
         }
 
-        [HttpGet("Restaurantespor{nome}")]
-        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> GetRestaurantesNome(string nome)
+       [HttpGet("Restaurantespor{nome}")]
+       public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> GetRestaurantesNome(string nome)
+        {
+        var config = new MapperConfiguration(cfg =>
+        {
+            cfg.CreateMap<Restaurantes, RestaurantesDTO>();
+        });
+        AutoMapper.IMapper mapper = config.CreateMapper();
+
+       using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+       {
+            var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome = @0", nome);
+
+            if (restaurantes == null)
+            {
+                return NotFound($"Não foi encontrada nenhuma Conta com o Nome: {nome}. Insira outro Nome.");
+            }
+
+            var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+
+            return Ok(restaurantesDTO);
+       }
+    }
+
+        [HttpGet("RestaurantesporNipc/{nipc}")]
+        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> RestaurantesporNipc(string nipc)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -90,11 +114,11 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome = @0", nome);
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE NipcEmpresa = @0", nipc);
 
                 if (restaurantes == null)
                 {
-                    return NotFound($"Não foi encontrada nenhuma Conta com o Id: {nome}. Insira outro Id.");
+                    return NotFound($"Não foi encontrada nenhuma Conta com o Id: {nipc}. Insira outro Id.");
                 }
 
                 var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
@@ -102,6 +126,7 @@ namespace APIHungryHunters.Controllers
                 return Ok(restaurantesDTO);
             }
         }
+
         [HttpPost("AdicionarRestaurante")]
         public async Task<ActionResult> AddRestaurante([FromBody] List<RestaurantesDTO> restaurantesDTOs)
         {
@@ -174,36 +199,6 @@ namespace APIHungryHunters.Controllers
                 }
             }
             return Ok();
-        }
-
-        [HttpGet("ObterIdDoRestaurantePorEmail")]
-        public int? ObterIdDoRestaurantePorEmail(string email)
-        {
-            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
-            {
-                var user = db.FirstOrDefault<Restaurantes>("SELECT Id_restaurante FROM restaurantes WHERE Email = @0", email);
-
-                return user?.Id_restaurante;
-            }
-        }
-        // DELETE: api/Restaurantes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteRestaurantes(long id)
-        {
-            if (_context.Restaurantes == null)
-            {
-                return NotFound();
-            }
-            var restaurantes = await _context.Restaurantes.FindAsync(id);
-            if (restaurantes == null)
-            {
-                return NotFound();
-            }
-
-            _context.Restaurantes.Remove(restaurantes);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
         }
 
         private bool RestaurantesExists(long id)

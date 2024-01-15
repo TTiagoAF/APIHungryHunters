@@ -21,7 +21,7 @@ namespace APIHungryHunters.Models
         public string Coordenadas { get; set; }
         public string Descricao { get; set; }
         public int CapacidadeGrupo { get; set; }
-        public Boolean Autorizado { get; set; }
+        public string Autorizado { get; set; }
         [ResultColumn]
         public List<PlantaRestaurante> PlantaRestaurantes { get; set; }
         [ResultColumn]

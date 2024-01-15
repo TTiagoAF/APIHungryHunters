@@ -277,32 +277,25 @@ namespace APIHungryHunters.Controllers
         {
             try
             {
-                // Conexão com o banco de dados
                 using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
                 {
-                    // Consulta o brinquedo pelo ID
-                    var brinquedo = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Razao_social = @0", Razao_social);
+                    var num = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Razao_social = @0", Razao_social);
 
-                    // Verifica se o brinquedo foi encontrado
-                    if (brinquedo == null)
+                    if (num == null)
                     {
-                        return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {Razao_social}. Insira outro Id.");
+                        return NotFound($"Não foi encontrado nenhuma empresa com a razão social: {Razao_social}. Insira outra razão social.");
                     }
 
-                    // Atualiza a quantidade e vendas totais do brinquedo
-                    brinquedo.Num_Restaurante += 1;
+                    num.Num_Restaurante += 1;
 
-                    // Atualiza o brinquedo na tabela brinquedos
-                    await db.UpdateAsync("empresa", "Razao_social", brinquedo);
+                    await db.UpdateAsync("empresa", "Razao_social", num);
 
-                    // Retorna uma resposta sem conteúdo
                     return NoContent();
                 }
             }
             catch (Exception ex)
             {
-                // Retorna uma resposta de erro interno do servidor
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar a quantidade e vendas totais do brinquedo");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
             }
         }
 
@@ -311,32 +304,53 @@ namespace APIHungryHunters.Controllers
         {
             try
             {
-                // Conexão com o banco de dados
                 using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
                 {
-                    // Consulta o brinquedo pelo ID
-                    var brinquedo = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Razao_social = @0", Razao_social);
+                    var num = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Razao_social = @0", Razao_social);
 
-                    // Verifica se o brinquedo foi encontrado
-                    if (brinquedo == null)
+                    if (num == null)
                     {
-                        return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {Razao_social}. Insira outro Id.");
+                        return NotFound($"Não foi encontrado nenhuma empresa com a razão social: {Razao_social}. Insira outra razão social.");
                     }
 
-                    // Atualiza a quantidade e vendas totais do brinquedo
-                    brinquedo.Num_Restaurante -= 1;
+                    num.Num_Restaurante -= 1;
 
-                    // Atualiza o brinquedo na tabela brinquedos
-                    await db.UpdateAsync("empresa", "Razao_social", brinquedo);
+                    await db.UpdateAsync("empresa", "Razao_social", num);
 
-                    // Retorna uma resposta sem conteúdo
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
+            }
+        }
+
+        [HttpPost("MenosRestauranteporNipc/{Nipc}")]
+        public async Task<ActionResult> MenosRestauranteNipc(string Nipc)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var num = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Nipc = @0", Nipc);
+
+                    if (num == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhuma empresa com a razão social: {Nipc}. Insira outra razão social.");
+                    }
+
+                    num.Num_Restaurante -= 1;
+
+                    await db.UpdateAsync("empresa", "Nipc", num);
+
                     return NoContent();
                 }
             }
             catch (Exception ex)
             {
                 // Retorna uma resposta de erro interno do servidor
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar a quantidade e vendas totais do brinquedo");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
             }
         }
 
