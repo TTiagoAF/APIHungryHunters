@@ -12,6 +12,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
@@ -68,6 +69,7 @@ namespace APIHungryHunters.Controllers
         }
 
         [HttpGet("BuscarEmpresaspor{Nipc}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<TodasEmpresasDTO>>> GetEmpresas(string Nipc)
         {
             var config = new MapperConfiguration(cfg =>
@@ -105,6 +107,7 @@ namespace APIHungryHunters.Controllers
         }
 
         [HttpGet("Empresaspor{Razao_social}")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<EmpresasDTO>>> GetEmpresasNome(string Razao_social)
         {
             var config = new MapperConfiguration(cfg =>
@@ -119,7 +122,7 @@ namespace APIHungryHunters.Controllers
 
                 if (empresas == null)
                 {
-                    return NotFound($"Não foi encontrada nenhuma Conta com o Id: {Razao_social}. Insira outro Id.");
+                    return NotFound($"Não foi encontrada nenhuma empresa com essa razão social: {Razao_social}. Insira outra razão social.");
                 }
 
                 var empresasDTO = mapper.Map<List<EmpresasDTO>>(empresas);
@@ -253,26 +256,35 @@ namespace APIHungryHunters.Controllers
 
         private string GenerateJwtToken(string nipc)
         {
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtEmpresas:SecretKey"]));
-            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var issuer = _configuration["Jwt:Issuer"];
+            var audience = _configuration["Jwt:Audience"];
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+            var signingCredentials = new SigningCredentials(
+                                    new SymmetricSecurityKey(key),
+                                    SecurityAlgorithms.HmacSha512Signature
+                                );
+
+            var subject = new ClaimsIdentity(new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, nipc),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-        };
-
-            var token = new JwtSecurityToken(
-                issuer: _configuration["JwtEmpresas:Issuer"],
-                audience: _configuration["JwtEmpresas:Audience"],
-                claims: claims,
-                signingCredentials: credentials
-            );
-
-            return new JwtSecurityTokenHandler().WriteToken(token);
+                new Claim(JwtRegisteredClaimNames.Sub, nipc),
+                new Claim(JwtRegisteredClaimNames.Email, nipc),
+            });
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = subject,
+                Issuer = issuer,
+                Audience = audience,
+                SigningCredentials = signingCredentials
+            };
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var jwtToken = tokenHandler.WriteToken(token);
+            return jwtToken;
         }
-
+        
         [HttpPost("MaisRestaurante/{Razao_social}")]
+        [Authorize]
         public async Task<ActionResult> MaisRestaurante(string Razao_social)
         {
             try
@@ -300,6 +312,7 @@ namespace APIHungryHunters.Controllers
         }
 
         [HttpPost("MenosRestaurante/{Razao_social}")]
+        [Authorize]
         public async Task<ActionResult> MenosRestaurante(string Razao_social)
         {
             try
@@ -327,6 +340,7 @@ namespace APIHungryHunters.Controllers
         }
 
         [HttpPost("MenosRestauranteporNipc/{Nipc}")]
+        [Authorize]
         public async Task<ActionResult> MenosRestauranteNipc(string Nipc)
         {
             try
@@ -337,7 +351,7 @@ namespace APIHungryHunters.Controllers
 
                     if (num == null)
                     {
-                        return NotFound($"Não foi encontrado nenhuma empresa com a razão social: {Nipc}. Insira outra razão social.");
+                        return NotFound($"Não foi encontrado nenhuma empresa com o Nipc: {Nipc}. Insira outro Nipc.");
                     }
 
                     num.Num_Restaurante -= 1;

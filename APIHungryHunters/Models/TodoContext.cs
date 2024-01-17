@@ -16,6 +16,9 @@ namespace APIHungryHunters.Models
         public DbSet<PlantaRestaurante> PlantaRestaurantes { get; set; } = null!;
         public DbSet<RestauranteMenu> RestauranteMenu { get; set; } = null!;
         public DbSet<Empresas> Empresas { get; set; } = null!;
+        public DbSet<Categorias> Categorias { get; set; } = null!;
+        public DbSet<DiasDeFuncionamento> DiasDeFuncionamentos { get; set; } = null!;
+        public DbSet<Ferias> Ferias { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,6 +39,24 @@ namespace APIHungryHunters.Models
                 .WithMany(r => r.Restaurantes)
                 .HasForeignKey(ot => ot.NipcEmpresa)
                 .HasConstraintName("fk_nipcempresa");
+
+            modelBuilder.Entity<Categorias>()
+                .HasOne(ot => ot.Restaurante)
+                .WithMany(r => r.Categorias)
+                .HasForeignKey(ot => ot.RestauranteId)
+                .HasConstraintName("fk_idrestaurante_categorias");
+
+            modelBuilder.Entity<DiasDeFuncionamento>()
+                .HasOne(ot => ot.Restaurante)
+                .WithMany(r => r.DiasDeFuncionamentos)
+                .HasForeignKey(ot => ot.RestauranteId)
+                .HasConstraintName("fk_idrestaurante");
+
+            modelBuilder.Entity<Ferias>()
+                .HasOne(ot => ot.Restaurante)
+                .WithMany(r => r.Ferias)
+                .HasForeignKey(ot => ot.RestauranteId)
+                .HasConstraintName("fk_idrestaurante_ferias");
         }      
     }
 }

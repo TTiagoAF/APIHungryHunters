@@ -247,23 +247,30 @@ public class ContasController : ControllerBase
 
     private string GenerateJwtToken(string email)
     {
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
-        var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var issuer = _configuration["Jwt:Issuer"];
+        var audience = _configuration["Jwt:Audience"];
+        var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+        var signingCredentials = new SigningCredentials(
+                                new SymmetricSecurityKey(key),
+                                SecurityAlgorithms.HmacSha512Signature
+                            );
 
-        var claims = new[]
+        var subject = new ClaimsIdentity(new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                new Claim(JwtRegisteredClaimNames.Sub, email),
+                new Claim(JwtRegisteredClaimNames.Email, email),
+            });
+        var tokenDescriptor = new SecurityTokenDescriptor
+        {
+            Subject = subject,
+            Issuer = issuer,
+            Audience = audience,
+            SigningCredentials = signingCredentials
         };
-
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            signingCredentials: credentials
-        );
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var token = tokenHandler.CreateToken(tokenDescriptor);
+        var jwtToken = tokenHandler.WriteToken(token);
+        return jwtToken;
     }
 
     [HttpPut("UpdateConta/{id}")]

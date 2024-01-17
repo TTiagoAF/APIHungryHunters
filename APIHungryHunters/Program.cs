@@ -29,28 +29,28 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSingleton(builder.Configuration);
 
-var key = Encoding.ASCII.GetBytes("dsogjreugh-jhsslçfkrejHJHFuyu.HGhjfguweoqdndsgkj,uyefygweydgwytcGDFD.fiufh");
-
-builder.Services.AddAuthentication(x =>
+builder.Services.AddAuthentication(options =>
 {
-    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(x =>
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(o =>
 {
-    var configuration = builder.Configuration;
-    x.RequireHttpsMetadata = true;
-    x.SaveToken = true;
-    x.TokenValidationParameters = new TokenValidationParameters
+    o.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])),
         ValidateIssuer = true,
-        ValidIssuer = configuration.GetSection("Jwt:Issuer").Value,
         ValidateAudience = true,
-        ValidAudience = configuration.GetSection("Jwt:Audience").Value
+        ValidateLifetime = false,
+        ValidateIssuerSigningKey = true
     };
 });
+builder.Services.AddAuthorization();
+// Add configuration from appsettings.json
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddEnvironmentVariables();
 
 var app = builder.Build();
 
@@ -62,9 +62,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthentication();
-
 app.UseAuthorization();
+IConfiguration configuration = app.Configuration;
+IWebHostEnvironment environment = app.Environment;
 
 app.UseCors();
 

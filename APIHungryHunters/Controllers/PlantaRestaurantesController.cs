@@ -9,9 +9,11 @@ using APIHungryHunters.Models;
 using System.Drawing;
 using AutoMapper;
 using PetaPoco;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class PlantaRestaurantesController : ControllerBase

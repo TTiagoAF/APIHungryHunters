@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RestaurantesController : ControllerBase
@@ -55,6 +56,26 @@ namespace APIHungryHunters.Controllers
                 return Ok(responseItems);
             }
         }
+
+        [HttpGet("ListadeRestaurantesAutorizados")]
+        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> GetAutorizados()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, RestaurantesDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Autorizado = @0", "true");
+
+                var responseItems = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+
+                return Ok(responseItems);
+            }
+        }
+
         [HttpGet("BuscarRestaurantepor{id}")]
         public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> GetRestaurantes(long id)
         {
@@ -70,7 +91,7 @@ namespace APIHungryHunters.Controllers
 
                 if (restaurantes == null)
                 {
-                    return NotFound($"Não foi encontrada nenhuma Conta com o Id: {id}. Insira outro Id.");
+                    return NotFound($"Não foi encontrada nenhum restaurante com o Id: {id}. Insira outro Id.");
                 }
 
                 var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
@@ -94,7 +115,7 @@ namespace APIHungryHunters.Controllers
 
             if (restaurantes == null)
             {
-                return NotFound($"Não foi encontrada nenhuma Conta com o Nome: {nome}. Insira outro Nome.");
+                return NotFound($"Não foi encontrada nenhum restaurante com o Nome: {nome}. Insira outro Nome.");
             }
 
             var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
@@ -118,7 +139,7 @@ namespace APIHungryHunters.Controllers
 
                 if (restaurantes == null)
                 {
-                    return NotFound($"Não foi encontrada nenhuma Conta com o Id: {nipc}. Insira outro Id.");
+                    return NotFound($"Não foi encontrada nenhum restaurante com o Nipc: {nipc}. Insira outro Nipc.");
                 }
 
                 var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
@@ -148,14 +169,14 @@ namespace APIHungryHunters.Controllers
 
                     if (string.IsNullOrWhiteSpace(restaurantesDTO.Nome))
                     {
-                        var erro1 = new { Mensagem = "Preencha a razão social" };
+                        var erro1 = new { Mensagem = "Preencha o nome" };
                         return BadRequest(erro1);
                     }
                     
                     var existingNome = await db.FirstOrDefaultAsync<string>("SELECT Nome FROM restaurantes WHERE Nome = @Nome", new { Nome = restaurantesDTO.Nome });
                     if (!string.IsNullOrEmpty(existingNome))
                     {
-                        var erro1 = new { Mensagem = "Este Razão Social já está a ser utilizado." };
+                        var erro1 = new { Mensagem = "Este nome já está a ser utilizado" };
                         return BadRequest(erro1);
                     }
 
@@ -199,6 +220,33 @@ namespace APIHungryHunters.Controllers
                 }
             }
             return Ok();
+        }
+
+        [HttpPost("DeleteRestaurantes/{nome}")]
+        public async Task<ActionResult> DeleteRestaurantes(string nome)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                        var todosBrinquedos = await db.SingleOrDefaultAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome = @0", nome);
+
+                        if (todosBrinquedos == null)
+                        {
+                            return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {nome}. Insira outro Id.");
+                        }
+                        else
+                        {
+                            await db.DeleteAsync("restaurantes", "Nome", todosBrinquedos);
+                        }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir brinquedo(s)");
+            }
         }
 
         private bool RestaurantesExists(long id)

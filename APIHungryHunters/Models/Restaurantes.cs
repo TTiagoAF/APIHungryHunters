@@ -26,5 +26,11 @@ namespace APIHungryHunters.Models
         public List<PlantaRestaurante> PlantaRestaurantes { get; set; }
         [ResultColumn]
         public List<RestauranteMenu> RestauranteMenus { get; set; }
+        [ResultColumn]
+        public List<Categorias> Categorias { get; set; }
+        [ResultColumn]
+        public List<DiasDeFuncionamento> DiasDeFuncionamentos { get; set; }
+        [ResultColumn]
+        public List<Ferias> Ferias { get; set; }
     }
 }
