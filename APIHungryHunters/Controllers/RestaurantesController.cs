@@ -200,13 +200,13 @@ namespace APIHungryHunters.Controllers
 
                     if (string.IsNullOrWhiteSpace(restaurantesDTO.Coordenadas))
                     {
-                        var erro1 = new { Mensagem = "Coordenadas inválido" };
+                        var erro1 = new { Mensagem = "Coordenadas inválidas" };
                         return BadRequest(erro1);
                     }
 
                     if (string.IsNullOrWhiteSpace(restaurantesDTO.Descricao))
                     {
-                        var erro1 = new { Mensagem = "Descrição inválido" };
+                        var erro1 = new { Mensagem = "Descrição inválida" };
                         return BadRequest(erro1);
                     }
                     if (restaurantesDTO.CapacidadeGrupo <= 0)

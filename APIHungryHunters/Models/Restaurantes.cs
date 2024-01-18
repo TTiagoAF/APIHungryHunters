@@ -32,5 +32,9 @@ namespace APIHungryHunters.Models
         public List<DiasDeFuncionamento> DiasDeFuncionamentos { get; set; }
         [ResultColumn]
         public List<Ferias> Ferias { get; set; }
+        [ResultColumn]
+        public List<DiasFestivos> DiasFestivos { get; set; }
+        [ResultColumn]
+        public List<Horarios> Horarios { get; set; }
     }
 }

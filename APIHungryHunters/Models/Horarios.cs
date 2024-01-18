@@ -1,20 +1,17 @@
 ﻿using PetaPoco;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIHungryHunters.Models
 {
-    public class RestauranteMenu
+    public class Horarios
     {
         [Key]
-        public int Id_pratos { get; set; }
+        public int Id_horarios { get; set; }
         public int RestauranteId { get; set; }
         [ForeignKey("RestauranteId")]
         [ResultColumn]
         public virtual Restaurantes Restaurante { get; set; }
-        public string Nome { get; set; }
-        public Decimal Preco { get; set; }
-        public string Desc_prato { get; set; }
-        public string CategoriaPrato { get; set; }
+        public string HoraReserva { get; set; }
     }
 }

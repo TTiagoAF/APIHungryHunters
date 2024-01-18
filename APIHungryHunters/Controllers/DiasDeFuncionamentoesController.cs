@@ -26,7 +26,7 @@ namespace APIHungryHunters.Controllers
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
 
         [HttpGet("ListadeDias")]
-        public async Task<ActionResult<IEnumerable<CategoriasDTO>>> ObterTodosDias()
+        public async Task<ActionResult<IEnumerable<DiasDeFuncionamentoDTO>>> ObterTodosDias()
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -94,9 +94,39 @@ namespace APIHungryHunters.Controllers
             {
                 foreach (var diasDeFuncionamentoDTO in diasDeFuncionamentoDTOs)
                 {
-                    if (string.IsNullOrWhiteSpace(diasDeFuncionamentoDTO.DiasDaSemana))
+                    if (diasDeFuncionamentoDTO.Segunda != "false" && diasDeFuncionamentoDTO.Segunda != "true")
                     {
-                        var erro1 = new { Mensagem = "Insira um dia da semana" };
+                        var erro1 = new { Mensagem = "Resposta inválida" };
+                        return BadRequest(erro1);
+                    }
+                    if (diasDeFuncionamentoDTO.Terca != "false" && diasDeFuncionamentoDTO.Terca != "true")
+                    {
+                        var erro1 = new { Mensagem = "Resposta inválida" };
+                        return BadRequest(erro1);
+                    }
+                    if (diasDeFuncionamentoDTO.Quarta != "false" && diasDeFuncionamentoDTO.Quarta != "true")
+                    {
+                        var erro1 = new { Mensagem = "Resposta inválida" };
+                        return BadRequest(erro1);
+                    }
+                    if (diasDeFuncionamentoDTO.Quinta != "false" && diasDeFuncionamentoDTO.Quinta != "true")
+                    {
+                        var erro1 = new { Mensagem = "Resposta inválida" };
+                        return BadRequest(erro1);
+                    }
+                    if (diasDeFuncionamentoDTO.Sexta != "false" && diasDeFuncionamentoDTO.Sexta != "true")
+                    {
+                        var erro1 = new { Mensagem = "Resposta inválida" };
+                        return BadRequest(erro1);
+                    }
+                    if (diasDeFuncionamentoDTO.Sabado != "false" && diasDeFuncionamentoDTO.Sabado != "true")
+                    {
+                        var erro1 = new { Mensagem = "Resposta inválida" };
+                        return BadRequest(erro1);
+                    }
+                    if (diasDeFuncionamentoDTO.Domingo != "false" && diasDeFuncionamentoDTO.Domingo != "true")
+                    {
+                        var erro1 = new { Mensagem = "Resposta inválida" };
                         return BadRequest(erro1);
                     }
 

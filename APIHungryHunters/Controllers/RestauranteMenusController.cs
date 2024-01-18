@@ -54,7 +54,7 @@ namespace APIHungryHunters.Controllers
                 var MenusporRestauranteId = await db.FetchAsync<RestauranteMenu>("SELECT * FROM restaurantepratos WHERE RestauranteId = @0", RestauranteId);
                 if (MenusporRestauranteId == null)
                 {
-                    return NotFound($"Não foi encontrada nenhuma menu com o Id: {RestauranteId}. Insira outro Id.");
+                    return NotFound($"Não foi encontrada nenhuma prato com o Id: {RestauranteId}. Insira outro Id.");
                 }
                 var responseItems = mapper.Map<List<RestauranteMenuDTO>>(MenusporRestauranteId);
                 return Ok(responseItems);
@@ -74,7 +74,7 @@ namespace APIHungryHunters.Controllers
                 var MenuporId = await db.FetchAsync<RestauranteMenu>("SELECT * FROM restaurantepratos WHERE Id_pratos = @0", IdMenu);
                 if (MenuporId == null)
                 {
-                    return NotFound($"Não foi encontrada nenhum menu com o Id: {IdMenu}. Insira outro Id.");
+                    return NotFound($"Não foi encontrada nenhum prato com o Id: {IdMenu}. Insira outro Id.");
                 }
                 var responseItems = mapper.Map<List<RestauranteMenuDTO>>(MenuporId);
                 return Ok(responseItems);
@@ -106,7 +106,12 @@ namespace APIHungryHunters.Controllers
                     }
                     if (string.IsNullOrWhiteSpace(restauranteMenuDTO.Desc_prato))
                     {
-                        var erro1 = new { Mensagem = "Descrição inválido" };
+                        var erro1 = new { Mensagem = "Descrição inválida" };
+                        return BadRequest(erro1);
+                    }
+                    if (string.IsNullOrWhiteSpace(restauranteMenuDTO.CategoriaPrato))
+                    {
+                        var erro1 = new { Mensagem = "Resposta inválida" };
                         return BadRequest(erro1);
                     }
 
