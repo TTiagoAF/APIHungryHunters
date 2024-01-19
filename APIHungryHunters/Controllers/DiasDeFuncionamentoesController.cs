@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DiasDeFuncionamentoesController : ControllerBase
@@ -129,13 +128,41 @@ namespace APIHungryHunters.Controllers
                         var erro1 = new { Mensagem = "Resposta inválida" };
                         return BadRequest(erro1);
                     }
+                    diasDeFuncionamentoDTO.Id_dias = ObterIdDias(diasDeFuncionamentoDTO.RestauranteId);
+                    var produtoExistente = await db.SingleOrDefaultAsync<DiasDeFuncionamento>("SELECT * FROM diasfuncionamento WHERE Id_dias = @0", diasDeFuncionamentoDTO.Id_dias);
 
-                    var novodia = mapper.Map<DiasDeFuncionamento>(diasDeFuncionamentoDTO);
-
-                    await db.InsertAsync("diasfuncionamento", "Id_dias", true, novodia);
+                    if (produtoExistente == null)
+                    {
+                        diasDeFuncionamentoDTO.Id_dias = 0;
+                        var novodia = mapper.Map<DiasDeFuncionamento>(diasDeFuncionamentoDTO);
+                        await db.InsertAsync("diasfuncionamento", "Id_dias", true, novodia);
+                    }
+                    else
+                    {
+                        var novodia2 = mapper.Map<DiasDeFuncionamento>(diasDeFuncionamentoDTO);
+                        await db.UpdateAsync("diasfuncionamento", "Id_dias", novodia2);
+                    }
                 }
             }
             return Ok();
+        }
+
+        [HttpGet("ObterIdDias")]
+        public int ObterIdDias(int restauranteid)
+        {
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var usuario = db.FirstOrDefault<DiasDeFuncionamento>("SELECT Id_dias FROM diasfuncionamento WHERE RestauranteId = @0", restauranteid);
+                if(usuario == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return usuario.Id_dias;
+                }
+                
+            }
         }
 
         private bool DiasDeFuncionamentoExists(int id)

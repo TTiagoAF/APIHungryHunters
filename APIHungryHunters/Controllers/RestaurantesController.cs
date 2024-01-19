@@ -249,6 +249,60 @@ namespace APIHungryHunters.Controllers
             }
         }
 
+        [HttpPost("MenosMesasporId/{IdRestaurante}")]
+        public async Task<ActionResult> MenosMesasId(string IdRestaurante)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var num = await db.SingleOrDefaultAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Id_restaurante = @0", IdRestaurante);
+
+                    if (num == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhuma empresa com o Nipc: {IdRestaurante}. Insira outro Nipc.");
+                    }
+
+                    num.NumeroMesas -= 1;
+
+                    await db.UpdateAsync("restaurantes", "Id_restaurante", num);
+
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
+            }
+        }
+
+        [HttpPost("MaisMesasporId/{IdRestaurante}")]
+        public async Task<ActionResult> MaisMesasId(string IdRestaurante)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var num = await db.SingleOrDefaultAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Id_restaurante = @0", IdRestaurante);
+
+                    if (num == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhuma empresa com o Nipc: {IdRestaurante}. Insira outro Nipc.");
+                    }
+
+                    num.NumeroMesas += 1;
+
+                    await db.UpdateAsync("restaurantes", "Id_restaurante", num);
+
+                    return NoContent();
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
+            }
+        }
+
         private bool RestaurantesExists(long id)
         {
             return (_context.Restaurantes?.Any(e => e.Id_restaurante == id)).GetValueOrDefault();

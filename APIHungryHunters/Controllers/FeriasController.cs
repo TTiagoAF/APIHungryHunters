@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using APIHungryHunters.Models;
 using AutoMapper;
 using PetaPoco;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FeriasController : ControllerBase
@@ -142,6 +144,27 @@ namespace APIHungryHunters.Controllers
                                 return BadRequest(erro5);
                             }
                         }
+                    }
+
+                    var existingFerias = await db.SingleOrDefaultAsync<Ferias>(
+                    "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
+                    "AND DAY(InicioFerias) = @InicioDia AND MONTH(InicioFerias) = @InicioMes AND YEAR(InicioFerias) = @InicioAno " +
+                    "AND DAY(FimFerias) = @FimDia AND MONTH(FimFerias) = @FimMes AND YEAR(FimFerias) = @FimAno",
+                     new
+                    {
+                        feriasDTO.RestauranteId,
+                        InicioDia = feriasDTO.InicioFerias.Day,
+                        InicioMes = feriasDTO.InicioFerias.Month,
+                        InicioAno = feriasDTO.InicioFerias.Year,
+                        FimDia = feriasDTO.FimFerias.Day,
+                        FimMes = feriasDTO.FimFerias.Month,
+                        FimAno = feriasDTO.FimFerias.Year
+                    });
+
+                    if (existingFerias != null)
+                    {
+                        var erro5 = new { Mensagem = "Já existe um registro de férias para este restaurante neste período." };
+                        return BadRequest(erro5);
                     }
 
                     var novaferias = mapper.Map<Ferias>(feriasDTO);

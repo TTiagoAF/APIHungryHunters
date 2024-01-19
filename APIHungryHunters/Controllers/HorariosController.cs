@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using APIHungryHunters.Models;
 using AutoMapper;
 using PetaPoco;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class HorariosController : ControllerBase
@@ -92,6 +94,19 @@ namespace APIHungryHunters.Controllers
             {
                 foreach (var horariosDTO in horariosDTOs)
                 {
+                    var existingHorario = await db.SingleOrDefaultAsync<Horarios>(
+                   "SELECT * FROM horariosreservas WHERE RestauranteId = @RestauranteId AND HoraReserva = @HoraReserva",
+                   new
+                   {
+                       horariosDTO.RestauranteId,
+                       HoraReserva = horariosDTO.HoraReserva
+                   });
+
+                    if (existingHorario != null)
+                    {
+                        var erro5 = new { Mensagem = "Já existe um horario para este restaurante nesta data." };
+                        return BadRequest(erro5);
+                    }
 
                     var novohorario = mapper.Map<Horarios>(horariosDTO);
 
@@ -100,6 +115,35 @@ namespace APIHungryHunters.Controllers
             }
             return Ok();
         }
+
+        [HttpPost("DeleteHora/{horaReserva}/{RestauranteId}")]
+        public async Task<ActionResult> DeleteHora(string horaReserva, int RestauranteId)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var todoshorarios = await db.SingleOrDefaultAsync<Horarios>("SELECT * FROM horariosreservas WHERE RestauranteId = @0 AND HoraReserva = @1", RestauranteId, horaReserva);
+
+                    if (todoshorarios == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {horaReserva}. Insira outro Id.");
+                    }
+                    else
+                    {
+                        await db.DeleteAsync("horariosreservas", "Id_horarios", todoshorarios);
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir brinquedo(s)");
+            }
+        }
+
+        
 
         private bool HorariosExists(int id)
         {

@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using APIHungryHunters.Models;
 using AutoMapper;
 using PetaPoco;
+using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class DiasFestivosController : ControllerBase
@@ -116,6 +118,22 @@ namespace APIHungryHunters.Controllers
                                 return BadRequest(erro5);
                             }
                         }
+                    }
+
+                    var existingFestivo = await db.SingleOrDefaultAsync<DiasFestivos>(
+                    "SELECT * FROM diasfestivos WHERE RestauranteId = @RestauranteId AND YEAR(DiaFestivo) = @Year AND MONTH(DiaFestivo) = @Month AND DAY(DiaFestivo) = @Day",
+                    new
+                    {
+                        diasFestivosDTO.RestauranteId,
+                        Year = diasFestivosDTO.DiaFestivo.Year,
+                        Month = diasFestivosDTO.DiaFestivo.Month,
+                        Day = diasFestivosDTO.DiaFestivo.Day
+                    });
+
+                    if (existingFestivo != null)
+                    {
+                        var erro5 = new { Mensagem = "Já existe um dia festivo para este restaurante nesta data." };
+                        return BadRequest(erro5);
                     }
 
                     var novofestivo = mapper.Map<DiasFestivos>(diasFestivosDTO);

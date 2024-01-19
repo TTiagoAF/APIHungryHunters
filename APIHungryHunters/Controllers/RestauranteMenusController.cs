@@ -61,6 +61,26 @@ namespace APIHungryHunters.Controllers
             }
         }
 
+        [HttpGet("Lista/{RestauranteId}/{Categoria}")]
+        public async Task<ActionResult<IEnumerable<RestauranteMenuDTO>>> Categorias(int RestauranteId, string Categoria)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<RestauranteMenu, RestauranteMenuDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var MenusporRestauranteId = await db.FetchAsync<RestauranteMenu>("SELECT * FROM restaurantepratos WHERE RestauranteId = @0 AND CategoriaPrato = @1", RestauranteId, Categoria);
+                if (MenusporRestauranteId == null)
+                {
+                    return NotFound($"Não foi encontrada nenhuma prato com o Id: {RestauranteId}. Insira outro Id.");
+                }
+                var responseItems = mapper.Map<List<RestauranteMenuDTO>>(MenusporRestauranteId);
+                return Ok(responseItems);
+            }
+        }
+
         [HttpGet("ListadeMenusporIdMenus/{IdMenu}")]
         public async Task<ActionResult<IEnumerable<RestauranteMenuDTO>>> ObterMenusporId(int IdMenu)
         {
