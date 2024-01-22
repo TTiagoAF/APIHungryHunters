@@ -10,6 +10,8 @@ namespace APIHungryHunters.Models
         public int Id_categoria { get; set; }
         public int RestauranteId { get; set; }
         [ForeignKey("RestauranteId")]
-        public string Categoria { get; set; }
+        public string Categoria_Um { get; set; }
+        public string Categoria_Dois { get; set; }
+        public string Categoria_Tres { get; set; }
     }
 }

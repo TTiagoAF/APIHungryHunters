@@ -12,6 +12,8 @@ namespace APIHungryHunters.Models
         [ForeignKey("RestauranteId")]
         [ResultColumn]
         public virtual Restaurantes Restaurante { get; set; }
-        public string Categoria { get; set; }
+        public string Categoria_Um { get; set; }
+        public string Categoria_Dois { get; set; }
+        public string Categoria_Tres { get; set; }
     }
 }

@@ -104,7 +104,7 @@ namespace APIHungryHunters.Controllers
 
                     if (existingHorario != null)
                     {
-                        var erro5 = new { Mensagem = "Já existe um horario para este restaurante nesta data." };
+                        var erro5 = new { Mensagem = "Já existe esse horario para este restaurante ." };
                         return BadRequest(erro5);
                     }
 
@@ -127,7 +127,7 @@ namespace APIHungryHunters.Controllers
 
                     if (todoshorarios == null)
                     {
-                        return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {horaReserva}. Insira outro Id.");
+                        return NotFound($"Não foi encontrado nenhum horario: {horaReserva}. Insira outro horario.");
                     }
                     else
                     {
@@ -139,7 +139,7 @@ namespace APIHungryHunters.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir brinquedo(s)");
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir horario");
             }
         }
 

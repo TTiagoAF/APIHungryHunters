@@ -94,19 +94,63 @@ namespace APIHungryHunters.Controllers
             {
                 foreach (var categoriasDTO in categoriasDTOs)
                 {
-                    if (string.IsNullOrWhiteSpace(categoriasDTO.Categoria))
+                    if (string.IsNullOrWhiteSpace(categoriasDTO.Categoria_Um))
                     {
-                        var erro1 = new { Mensagem = "Escolha uma categoria" };
+                        var erro1 = new { Mensagem = "Preencha a categoria um" };
+                        return BadRequest(erro1);
+                    }
+                    if (string.IsNullOrWhiteSpace(categoriasDTO.Categoria_Dois))
+                    {
+                        var erro1 = new { Mensagem = "Preencha a categoria dois" };
+                        return BadRequest(erro1);
+                    }
+                    if (string.IsNullOrWhiteSpace(categoriasDTO.Categoria_Tres))
+                    {
+                        var erro1 = new { Mensagem = "Preencha a categoria três" };
                         return BadRequest(erro1);
                     }
 
-                    var novacategoria = mapper.Map<Categorias>(categoriasDTO);
+                    categoriasDTO.Id_categoria = ObterIdCategoria(categoriasDTO.RestauranteId);
+                    var produtoExistente = await db.SingleOrDefaultAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE Id_categoria = @0", categoriasDTO.Id_categoria);
 
-                    await db.InsertAsync("restaurantecategorias", "Id_categoria", true, novacategoria);
+                    if (produtoExistente == null)
+                    {
+                        categoriasDTO.Id_categoria = 0;
+                        var novacategoria = mapper.Map<Categorias>(categoriasDTO);
+
+                        await db.InsertAsync("restaurantecategorias", "Id_categoria", true, novacategoria);
+                    }
+                    else
+                    {
+                        var novacategoria = mapper.Map<Categorias>(categoriasDTO);
+
+                        await db.UpdateAsync("restaurantecategorias", "Id_categoria", novacategoria);
+                    }
+
+                    
                 }
             }
             return Ok();
         }
+
+        [HttpGet("ObterIdCategoria")]
+        public int ObterIdCategoria(int restauranteid)
+        {
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var usuario = db.FirstOrDefault<Categorias>("SELECT Id_categoria FROM restaurantecategorias WHERE RestauranteId = @0", restauranteid);
+                if (usuario == null)
+                {
+                    return 0;
+                }
+                else
+                {
+                    return usuario.Id_categoria;
+                }
+
+            }
+        }
+
         private bool CategoriasExists(int id)
         {
             return (_context.Categorias?.Any(e => e.Id_categoria == id)).GetValueOrDefault();

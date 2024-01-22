@@ -110,7 +110,7 @@ namespace APIHungryHunters.Controllers
                     }
                     if (diasFestivosDTO.DiaFestivo.Year == DateTime.Now.Year)
                     {
-                        if (diasFestivosDTO.DiaFestivo.Month >= DateTime.Now.Month)
+                        if (diasFestivosDTO.DiaFestivo.Month <= DateTime.Now.Month)
                         {
                             if (diasFestivosDTO.DiaFestivo.Day < DateTime.Now.Day)
                             {
@@ -142,6 +142,33 @@ namespace APIHungryHunters.Controllers
                 }
             }
             return Ok();
+        }
+
+        [HttpPost("EliminarFestivos/{FestivosId}")]
+        public async Task<ActionResult> DeleteFestivos(int FestivosId)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var todosfestivos = await db.SingleOrDefaultAsync<DiasFestivos>("SELECT * FROM diasfestivos WHERE Id_festivo = @0", FestivosId);
+
+                    if (todosfestivos == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhum prato com o id: {todosfestivos}.");
+                    }
+                    else
+                    {
+                        await db.DeleteAsync("diasfestivos", "Id_festivo", todosfestivos);
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir horario");
+            }
         }
 
         private bool DiasFestivosExists(int id)

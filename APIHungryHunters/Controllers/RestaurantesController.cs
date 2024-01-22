@@ -233,7 +233,7 @@ namespace APIHungryHunters.Controllers
 
                         if (todosBrinquedos == null)
                         {
-                            return NotFound($"Não foi encontrado nenhum Brinquedo com o Id: {nome}. Insira outro Id.");
+                            return NotFound($"Não foi encontrado nenhum Restaurante com o nome: {nome}. Insira outro nome.");
                         }
                         else
                         {
@@ -260,7 +260,7 @@ namespace APIHungryHunters.Controllers
 
                     if (num == null)
                     {
-                        return NotFound($"Não foi encontrado nenhuma empresa com o Nipc: {IdRestaurante}. Insira outro Nipc.");
+                        return NotFound($"Não foi encontrado nenhum restaurante com o Id: {IdRestaurante}. Insira outro Id.");
                     }
 
                     num.NumeroMesas -= 1;
@@ -287,7 +287,7 @@ namespace APIHungryHunters.Controllers
 
                     if (num == null)
                     {
-                        return NotFound($"Não foi encontrado nenhuma empresa com o Nipc: {IdRestaurante}. Insira outro Nipc.");
+                        return NotFound($"Não foi encontrado nenhum empresa com o Nipc: {IdRestaurante}. Insira outro Nipc.");
                     }
 
                     num.NumeroMesas += 1;

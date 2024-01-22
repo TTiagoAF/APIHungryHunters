@@ -175,6 +175,33 @@ namespace APIHungryHunters.Controllers
             return Ok();
         }
 
+        [HttpPost("EliminarFerias/{FeriasId}")]
+        public async Task<ActionResult> DeleteFerias(int FeriasId)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var todasferias = await db.SingleOrDefaultAsync<Ferias>("SELECT * FROM ferias WHERE Id_ferias = @0", FeriasId);
+
+                    if (todasferias == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhum prato com o id: {FeriasId}.");
+                    }
+                    else
+                    {
+                        await db.DeleteAsync("ferias", "Id_ferias", todasferias);
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir horario");
+            }
+        }
+
         private bool FeriasExists(int id)
         {
             return (_context.Ferias?.Any(e => e.Id_ferias == id)).GetValueOrDefault();

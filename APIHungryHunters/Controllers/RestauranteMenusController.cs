@@ -131,8 +131,23 @@ namespace APIHungryHunters.Controllers
                     }
                     if (string.IsNullOrWhiteSpace(restauranteMenuDTO.CategoriaPrato))
                     {
-                        var erro1 = new { Mensagem = "Resposta inválida" };
+                        var erro1 = new { Mensagem = "Categoria inválida inválida" };
                         return BadRequest(erro1);
+                    }
+
+                    var existingPrato = await db.SingleOrDefaultAsync<RestauranteMenu>(
+                    "SELECT * FROM restaurantepratos WHERE RestauranteId = @RestauranteId " +
+                    "AND Nome = @Nome",
+                     new
+                     {
+                         restauranteMenuDTO.RestauranteId,
+                         Nome = restauranteMenuDTO.Nome,
+                     });
+
+                    if (existingPrato != null)
+                    {
+                        var erro5 = new { Mensagem = "Já existe este prato para este restaurante elimina o prato primeiro para atualizar." };
+                        return BadRequest(erro5);
                     }
 
                     var novoPrato = mapper.Map<RestauranteMenu>(restauranteMenuDTO);
@@ -141,6 +156,33 @@ namespace APIHungryHunters.Controllers
                 }
             }
             return Ok();
+        }
+
+        [HttpPost("EliminarPratos/{PratosId}")]
+        public async Task<ActionResult> DeletePratos(int PratosId)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var todospratos = await db.SingleOrDefaultAsync<RestauranteMenu>("SELECT * FROM restaurantepratos WHERE Id_pratos = @0", PratosId);
+
+                    if (todospratos == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhum prato com o id: {PratosId}.");
+                    }
+                    else
+                    {
+                        await db.DeleteAsync("restaurantepratos", "Id_pratos", todospratos);
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir horario");
+            }
         }
     }
 }
