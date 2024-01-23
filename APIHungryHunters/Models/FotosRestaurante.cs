@@ -1,18 +1,18 @@
 ﻿using PetaPoco;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIHungryHunters.Models
 {
-    public class PlantaRestaurante
+    public class FotosRestaurante
     {
         [Key]
-        public int Id_planta { get; set; }
+        public int Id_fotos { get; set; }
         public int RestauranteId { get; set; }
         [ForeignKey("RestauranteId")]
         [ResultColumn]
         public virtual Restaurantes Restaurante { get; set; }
-        public string Planta_titulo { get; set; }
-        public IFormFile Planta_image { get; set; }
+        public string Foto_titulo { get; set; }
+        public IFormFile FotoRestaurante { get; set; }
     }
 }

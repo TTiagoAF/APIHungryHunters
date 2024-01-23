@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using PetaPoco;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace APIHungryHunters.Models
 {
@@ -7,8 +8,7 @@ namespace APIHungryHunters.Models
         public int Id_planta { get; set; }
         public int RestauranteId { get; set; }
         [ForeignKey("RestauranteId")]
-        public virtual RestaurantesDTO Restaurante { get; set; }
         public string Planta_titulo { get; set; }
-        public byte[] Planta_binary { get; set; }
+        public IFormFile Planta_image { get; set; }
     }
 }

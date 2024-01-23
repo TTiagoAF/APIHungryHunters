@@ -21,6 +21,8 @@ namespace APIHungryHunters.Models
         public DbSet<Ferias> Ferias { get; set; } = null!;
         public DbSet<DiasFestivos> DiasFestivos { get; set; } = null!;
         public DbSet<Horarios> Horarios { get; set; } = null!;
+        public DbSet<ImagemMenu> ImagemMenus { get; set; } = null!;
+        public DbSet<FotosRestaurante> FotosRestaurantes { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -71,6 +73,18 @@ namespace APIHungryHunters.Models
                 .WithMany(r => r.Horarios)
                 .HasForeignKey(ot => ot.RestauranteId)
                 .HasConstraintName("fk_idrestaurante_horarios");
+
+            modelBuilder.Entity<ImagemMenu>()
+                .HasOne(ot => ot.Restaurante)
+                .WithMany(r => r.ImagemMenus)
+                .HasForeignKey(ot => ot.RestauranteId)
+                .HasConstraintName("fk_idrestaurante_imagemmenu");
+
+            modelBuilder.Entity<FotosRestaurante>()
+                .HasOne(ot => ot.Restaurante)
+                .WithMany(r => r.FotosRestaurantes)
+                .HasForeignKey(ot => ot.RestauranteId)
+                .HasConstraintName("fk_idrestaurante_fotos");
         }      
     }
 }

@@ -16,45 +16,45 @@ namespace APIHungryHunters.Controllers
     
     [Route("api/[controller]")]
     [ApiController]
-    public class PlantaRestaurantesController : ControllerBase
+    public class FotosRestaurantesController : ControllerBase
     {
         private readonly TodoContext _context;
 
-        public PlantaRestaurantesController(TodoContext context)
+        public FotosRestaurantesController(TodoContext context)
         {
             _context = context;
         }
 
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
 
-        [HttpPost("AdicionarPlanta")]
-        public async Task<IActionResult> AdicionarPlantaRestaurante([FromForm] PlantaRestauranteDTO plantaRestauranteDto)
+        [HttpPost("AdicionarFotos")]
+        public async Task<ActionResult> AdicionarFotos([FromForm] FotosRestauranteDTO fotosRestauranteDTO)
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<PlantaRestauranteDTO, PlantaRestaurante>();
+                cfg.CreateMap<FotosRestauranteDTO, FotosRestaurante>();
             });
             AutoMapper.IMapper mapper = config.CreateMapper();
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                if (plantaRestauranteDto.Planta_image != null && plantaRestauranteDto.Planta_image.Length > 0)
+                if (fotosRestauranteDTO.FotoRestaurante != null && fotosRestauranteDTO.FotoRestaurante.Length > 0)
                 {
-                    string nomeArquivo = plantaRestauranteDto.Planta_image.FileName;
+                    string nomeArquivo = fotosRestauranteDTO.FotoRestaurante.FileName;
 
                     string caminhoArquivo = Path.Combine(".\\Imagens", nomeArquivo);
 
                     using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
                     {
-                        await plantaRestauranteDto.Planta_image.CopyToAsync(stream);
+                        await fotosRestauranteDTO.FotoRestaurante.CopyToAsync(stream);
                     }
 
-                    var plantaRestaurante = mapper.Map<PlantaRestaurante>(plantaRestauranteDto);
-                    plantaRestaurante.Planta_titulo = nomeArquivo;
+                    var imagemMenu = mapper.Map<FotosRestaurante>(fotosRestauranteDTO);
+                    imagemMenu.Foto_titulo = nomeArquivo;
 
-                    await db.InsertAsync("PlantaRestaurante", "Id_planta", true, plantaRestaurante);
+                    await db.InsertAsync("fotosrestaurante", "Id_fotos", true, imagemMenu);
 
-                    return Ok("PlantaRestaurante adicionado com sucesso!");
+                    return Ok("FotoRestaurante adicionado com sucesso!");
                 }
             }
 
