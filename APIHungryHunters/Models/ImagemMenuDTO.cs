@@ -11,6 +11,6 @@ namespace APIHungryHunters.Models
         public int RestauranteId { get; set; }
         [ForeignKey("RestauranteId")]
         public string Imagem_titulo { get; set; }
-        public IFormFile Menu_imagem { get; set; }
+        public List<IFormFile> Menu_imagem { get; set; }
     }
 }

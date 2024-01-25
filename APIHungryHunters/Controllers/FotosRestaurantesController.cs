@@ -27,6 +27,53 @@ namespace APIHungryHunters.Controllers
 
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
 
+        [HttpGet("ListadeFotosDoRestauranteDaBase")]
+        public async Task<ActionResult<IEnumerable<TituloFotosDTO>>> ObterTodasFotosDoRestauranteDaBase()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<FotosRestaurante, TituloFotosDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var todasFotos = await db.FetchAsync<FotosRestaurante>("SELECT * FROM fotosrestaurante");
+                var responseItems = mapper.Map<List<TituloFotosDTO>>(todasFotos);
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ListadeFotosDoRestauranteDaPasta")]
+        public async Task<ActionResult> ObterTodasFotosDoRestauranteDaPasta()
+        {
+            string[] fyles = Directory.GetFiles(".\\Imagens");
+            return Ok(fyles);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<IEnumerable<HorariosDTO>>> ObterHorariosporId(int id)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<FotosRestaurante, FotosRestauranteDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var fotosRestaurante = await db.FetchAsync<FotosRestaurante>("SELECT * FROM fotosrestaurante WHERE Id_fotos = @0", id);
+
+                if (fotosRestaurante == null)
+                {
+                    return NotFound("PlantaRestaurante não encontrado.");
+                }
+
+                var fotosRestauranteDto = mapper.Map<List<FotosRestauranteDTO>>(fotosRestaurante);
+
+                return Ok(fotosRestauranteDto);
+            }
+        }
+    
+
         [HttpPost("AdicionarFotos")]
         public async Task<ActionResult> AdicionarFotos([FromForm] FotosRestauranteDTO fotosRestauranteDTO)
         {
@@ -38,30 +85,31 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                if (fotosRestauranteDTO.FotoRestaurante != null && fotosRestauranteDTO.FotoRestaurante.Length > 0)
+                if (fotosRestauranteDTO.FotoRestaurante != null && fotosRestauranteDTO.FotoRestaurante.Count > 0)
                 {
-                    string nomeArquivo = fotosRestauranteDTO.FotoRestaurante.FileName;
-
-                    string caminhoArquivo = Path.Combine(".\\Imagens", nomeArquivo);
-
-                    using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
+                    foreach (var arquivo in fotosRestauranteDTO.FotoRestaurante)
                     {
-                        await fotosRestauranteDTO.FotoRestaurante.CopyToAsync(stream);
+                        string nomeArquivo = $@"{Guid.NewGuid()}{arquivo.FileName}";
+
+                        string caminhoArquivo = Path.Combine(".\\Imagens", nomeArquivo);
+
+                        using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
+                        {
+                            await arquivo.CopyToAsync(stream);
+                        }
+
+                        var imagemMenu = mapper.Map<FotosRestaurante>(fotosRestauranteDTO);
+                        imagemMenu.Foto_titulo = nomeArquivo;
+
+                        await db.InsertAsync("fotosrestaurante", "Id_fotos", true, imagemMenu);
                     }
 
-                    var imagemMenu = mapper.Map<FotosRestaurante>(fotosRestauranteDTO);
-                    imagemMenu.Foto_titulo = nomeArquivo;
-
-                    await db.InsertAsync("fotosrestaurante", "Id_fotos", true, imagemMenu);
-
-                    return Ok("FotoRestaurante adicionado com sucesso!");
+                    return Ok("FotosRestaurante adicionadas com sucesso!");
                 }
             }
-
+            
             return BadRequest("A imagem não foi fornecida ou é inválida.");
         }
-
-
     }
 }
 

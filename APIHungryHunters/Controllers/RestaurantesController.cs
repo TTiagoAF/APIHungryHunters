@@ -22,7 +22,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class RestaurantesController : ControllerBase
@@ -52,6 +51,110 @@ namespace APIHungryHunters.Controllers
                 var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes");
 
                 var responseItems = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesComCategorias")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseCategorias()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes ORDER BY Nome");
+
+                foreach(var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+                
+                var responseItems = mapper.Map<List<TodosRestaurantes>>(restaurantes);
+
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesComCategoriasLisboa")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseCategoriasLisboa()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY Nome", "Lisboa");
+
+                foreach(var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+                
+                var responseItems = mapper.Map<List<TodosRestaurantes>>(restaurantes);
+
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesComCategoriasPorto")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseCategoriasPorto()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY Nome", "Porto");
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+
+                var responseItems = mapper.Map<List<TodosRestaurantes>>(restaurantes);
+
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesComCategoriasFaro")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseCategoriasFaro()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY Nome", "Faro");
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+
+                var responseItems = mapper.Map<List<TodosRestaurantes>>(restaurantes);
 
                 return Ok(responseItems);
             }
@@ -102,27 +205,51 @@ namespace APIHungryHunters.Controllers
 
        [HttpGet("Restaurantespor{nome}")]
        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> GetRestaurantesNome(string nome)
-        {
-        var config = new MapperConfiguration(cfg =>
-        {
-            cfg.CreateMap<Restaurantes, RestaurantesDTO>();
-        });
-        AutoMapper.IMapper mapper = config.CreateMapper();
-
-       using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
        {
-            var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome = @0", nome);
+           var config = new MapperConfiguration(cfg =>
+           {
+               cfg.CreateMap<Restaurantes, RestaurantesDTO>();
+           });
+           AutoMapper.IMapper mapper = config.CreateMapper();
 
-            if (restaurantes == null)
-            {
-                return NotFound($"Não foi encontrada nenhum restaurante com o Nome: {nome}. Insira outro Nome.");
-            }
+           using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+           {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome = @0", nome);
 
-            var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+                if (restaurantes == null)
+                {
+                    return NotFound($"Não foi encontrada nenhum restaurante com o Nome: {nome}. Insira outro Nome.");
+                }
 
-            return Ok(restaurantesDTO);
+                var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+
+                return Ok(restaurantesDTO);
+           }
        }
-    }
+
+        [HttpGet("PesquisaDeRestaurantes{nome}")]
+        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> PesquisaDeRestaurantes(string nome)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, RestaurantesDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome LIKE @0", nome + '%');
+
+                if (restaurantes == null)
+                {
+                    return NotFound($"Não foi encontrada nenhum restaurante com o Nome: {nome}. Insira outro Nome.");
+                }
+
+                var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+
+                return Ok(restaurantesDTO);
+            }
+        }
 
         [HttpGet("RestaurantesporNipc/{nipc}")]
         public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> RestaurantesporNipc(string nipc)

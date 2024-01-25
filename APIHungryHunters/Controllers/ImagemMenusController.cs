@@ -28,7 +28,7 @@ namespace APIHungryHunters.Controllers
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
 
         [HttpPost("AdicionarImagemMenu")]
-        public async Task<IActionResult> AdicionarImagemMenu([FromForm] ImagemMenuDTO imagemMenuDTO)
+        public async Task<ActionResult> AdicionarImagemMenu([FromForm] ImagemMenuDTO imagemMenuDTO)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -38,30 +38,30 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                if (imagemMenuDTO.Menu_imagem != null && imagemMenuDTO.Menu_imagem.Length > 0)
+                if (imagemMenuDTO.Menu_imagem != null && imagemMenuDTO.Menu_imagem.Count > 0)
                 {
-                    string nomeArquivo = imagemMenuDTO.Menu_imagem.FileName;
-
-                    string caminhoArquivo = Path.Combine(".\\Imagens", nomeArquivo);
-
-                    using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
+                    foreach (var arquivo in imagemMenuDTO.Menu_imagem)
                     {
-                        await imagemMenuDTO.Menu_imagem.CopyToAsync(stream);
+                        string nomeArquivo = $@"{Guid.NewGuid()}{arquivo.FileName}";
+
+                        string caminhoArquivo = Path.Combine(".\\ImagensMenu", nomeArquivo);
+
+                        using (var stream = new FileStream(caminhoArquivo, FileMode.Create))
+                        {
+                            await arquivo.CopyToAsync(stream);
+                        }
+
+                        var imagemMenu = mapper.Map<ImagemMenu>(imagemMenuDTO);
+                        imagemMenu.Imagem_titulo = nomeArquivo;
+
+                        await db.InsertAsync("imagemmenu", "Id_imagemmenu", true, imagemMenu);
                     }
-
-                    var imagemMenu = mapper.Map<ImagemMenu>(imagemMenuDTO);
-                    imagemMenu.Imagem_titulo = nomeArquivo;
-
-                    await db.InsertAsync("imagemmenu", "Id_imagemmenu", true, imagemMenu);
 
                     return Ok("ImagemMenu adicionado com sucesso!");
                 }
             }
-
             return BadRequest("A imagem não foi fornecida ou é inválida.");
         }
-
-
     }
 }
 

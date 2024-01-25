@@ -12,7 +12,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoriasController : ControllerBase
@@ -97,16 +96,6 @@ namespace APIHungryHunters.Controllers
                     if (string.IsNullOrWhiteSpace(categoriasDTO.Categoria_Um))
                     {
                         var erro1 = new { Mensagem = "Preencha a categoria um" };
-                        return BadRequest(erro1);
-                    }
-                    if (string.IsNullOrWhiteSpace(categoriasDTO.Categoria_Dois))
-                    {
-                        var erro1 = new { Mensagem = "Preencha a categoria dois" };
-                        return BadRequest(erro1);
-                    }
-                    if (string.IsNullOrWhiteSpace(categoriasDTO.Categoria_Tres))
-                    {
-                        var erro1 = new { Mensagem = "Preencha a categoria três" };
                         return BadRequest(erro1);
                     }
 

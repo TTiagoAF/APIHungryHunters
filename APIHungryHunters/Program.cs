@@ -67,7 +67,18 @@ IConfiguration configuration = app.Configuration;
 IWebHostEnvironment environment = app.Environment;
 
 app.UseCors();
-
+if(!Directory.Exists("Imagens"))
+{
+    Directory.CreateDirectory("Imagens");
+}
+if (!Directory.Exists("ImagensMenu"))
+{
+    Directory.CreateDirectory("ImagensMenu");
+}
+if (!Directory.Exists("ImagensPlanta"))
+{
+    Directory.CreateDirectory("ImagensPlanta");
+}
 app.MapControllers();
 
 app.Run();

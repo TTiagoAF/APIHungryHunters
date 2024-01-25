@@ -32,6 +32,8 @@
 
   <ItemGroup>
     <Folder Include="Imagens\" />
+    <Folder Include="ImagensPlanta\" />
+    <Folder Include="ImagensMenu\" />
   </ItemGroup>
 
 </Project>

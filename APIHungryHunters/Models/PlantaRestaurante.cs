@@ -13,6 +13,5 @@ namespace APIHungryHunters.Models
         [ResultColumn]
         public virtual Restaurantes Restaurante { get; set; }
         public string Planta_titulo { get; set; }
-        public IFormFile Planta_image { get; set; }
     }
 }
