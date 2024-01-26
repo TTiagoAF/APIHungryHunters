@@ -68,7 +68,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes ORDER BY Nome");
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes ORDER BY RAND() LIMIT 5");
 
                 foreach(var restaurante in restaurantes)
                 {
@@ -94,7 +94,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY Nome", "Lisboa");
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY RAND() LIMIT 5", "Lisboa");
 
                 foreach(var restaurante in restaurantes)
                 {
@@ -120,7 +120,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY Nome", "Porto");
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY RAND() LIMIT 5", "Porto");
 
                 foreach (var restaurante in restaurantes)
                 {
@@ -146,7 +146,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY Nome", "Faro");
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Distrito = @0 ORDER BY RAND() LIMIT 5", "Faro");
 
                 foreach (var restaurante in restaurantes)
                 {
@@ -228,24 +228,26 @@ namespace APIHungryHunters.Controllers
        }
 
         [HttpGet("PesquisaDeRestaurantes{nome}")]
-        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> PesquisaDeRestaurantes(string nome)
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> PesquisaDeRestaurantes(string nome)
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Restaurantes, RestaurantesDTO>();
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
             });
             AutoMapper.IMapper mapper = config.CreateMapper();
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome LIKE @0", nome + '%');
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome LIKE @0 ORDER BY RAND()",'%' + nome + '%');
 
-                if (restaurantes == null)
+                foreach (var restaurante in restaurantes)
                 {
-                    return NotFound($"Não foi encontrada nenhum restaurante com o Nome: {nome}. Insira outro Nome.");
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
                 }
 
-                var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+                var restaurantesDTO = mapper.Map<List<TodosRestaurantes>>(restaurantes);
 
                 return Ok(restaurantesDTO);
             }
