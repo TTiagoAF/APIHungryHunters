@@ -16,7 +16,6 @@ namespace APIHungryHunters.Models
         public virtual Empresas Empresas { get; set; }
         public string Nome { get; set; }
         public Decimal PrecoMedio { get; set; }
-        public int NumeroMesas { get; set; }
         public string Distrito { get; set; }
         public string Coordenadas { get; set; }
         public string Descricao { get; set; }
@@ -40,5 +39,9 @@ namespace APIHungryHunters.Models
         public List<ImagemMenu> ImagemMenus { get; set; }
         [ResultColumn]
         public List<FotosRestaurante> FotosRestaurantes { get; set; }
+        [ResultColumn]
+        public List<Reservas> Reservas { get; set; }
+        [ResultColumn]
+        public List<Mesas> Mesas { get; set; }
     }
 }

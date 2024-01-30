@@ -23,6 +23,8 @@ namespace APIHungryHunters.Models
         public DbSet<Horarios> Horarios { get; set; } = null!;
         public DbSet<ImagemMenu> ImagemMenus { get; set; } = null!;
         public DbSet<FotosRestaurante> FotosRestaurantes { get; set; } = null!;
+        public DbSet<Reservas> Reservas { get; set; } = null!;
+        public DbSet<Mesas> Mesas { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -85,6 +87,30 @@ namespace APIHungryHunters.Models
                 .WithMany(r => r.FotosRestaurantes)
                 .HasForeignKey(ot => ot.RestauranteId)
                 .HasConstraintName("fk_idrestaurante_fotos");
+
+            modelBuilder.Entity<Reservas>()
+               .HasOne(ot => ot.Restaurante)
+               .WithMany(r => r.Reservas)
+               .HasForeignKey(ot => ot.RestauranteId)
+               .HasConstraintName("fk_idrestaurante_reservas");
+
+            modelBuilder.Entity<Reservas>()
+               .HasOne(ot => ot.Contas)
+               .WithMany(r => r.Reservas)
+               .HasForeignKey(ot => ot.ContaId)
+               .HasConstraintName("fk_idconta");
+
+            modelBuilder.Entity<Reservas>()
+               .HasOne(ot => ot.Mesas)
+               .WithMany(r => r.Reservas)
+               .HasForeignKey(ot => ot.MesaId)
+               .HasConstraintName("fk_idmesa");
+
+            modelBuilder.Entity<Mesas>()
+               .HasOne(ot => ot.Restaurante)
+               .WithMany(r => r.Mesas)
+               .HasForeignKey(ot => ot.RestauranteId)
+               .HasConstraintName("fk_idrestaurante_mesas");
         }      
     }
 }

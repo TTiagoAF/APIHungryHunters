@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using PetaPoco;
+using System.ComponentModel.DataAnnotations;
 
 namespace APIHungryHunters.Models
 {
@@ -12,5 +13,7 @@ namespace APIHungryHunters.Models
         public DateTime datadenascimento { get; set; }
         public int Pontos { get; set; }
         public string Password { get; set; }
+        [ResultColumn]
+        public List<Reservas> Reservas { get; set; }
     }
 }

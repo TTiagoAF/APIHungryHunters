@@ -17,5 +17,6 @@ namespace APIHungryHunters.Models
         public int CapacidadeGrupo { get; set; }
         public string Autorizado { get; set; }
         public List<Categorias> Categorias { get; set; }
+        public List<RestauranteMenu> RestauranteMenus { get; set; }
     }
 }

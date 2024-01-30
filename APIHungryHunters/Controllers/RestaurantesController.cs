@@ -82,6 +82,32 @@ namespace APIHungryHunters.Controllers
             }
         }
 
+        [HttpGet("TodaListadeRestaurantesComCategorias")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetTodosRestauranteseCategorias()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes ORDER BY RAND()");
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+
+                var responseItems = mapper.Map<List<TodosRestaurantes>>(restaurantes);
+
+                return Ok(responseItems);
+            }
+        }
+
         [HttpGet("ListadeRestaurantesComCategoriasLisboa")]
         public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseCategoriasLisboa()
         {
@@ -180,11 +206,13 @@ namespace APIHungryHunters.Controllers
         }
 
         [HttpGet("BuscarRestaurantepor{id}")]
-        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> GetRestaurantes(long id)
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestaurantes(long id)
         {
             var config = new MapperConfiguration(cfg =>
             {
-                cfg.CreateMap<Restaurantes, RestaurantesDTO>();
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<RestauranteMenu, RestauranteMenuDTO>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
             });
             AutoMapper.IMapper mapper = config.CreateMapper();
 
@@ -192,12 +220,16 @@ namespace APIHungryHunters.Controllers
             {
                 var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Id_restaurante = @0", id);
 
-                if (restaurantes == null)
+                foreach (var restaurante in restaurantes)
                 {
-                    return NotFound($"Não foi encontrada nenhum restaurante com o Id: {id}. Insira outro Id.");
+                    var menu = await db.FetchAsync<RestauranteMenu>("SELECT * FROM restaurantepratos WHERE RestauranteId = @0", id);
+                    restaurante.RestauranteMenus = menu;
+
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", id);
+                    restaurante.Categorias = categorias;
                 }
 
-                var restaurantesDTO = mapper.Map<List<RestaurantesDTO>>(restaurantes);
+                var restaurantesDTO = mapper.Map<List<TodosRestaurantes>>(restaurantes);
 
                 return Ok(restaurantesDTO);
             }
@@ -239,7 +271,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome LIKE @0 ORDER BY RAND()",'%' + nome + '%');
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Nome LIKE @0 ORDER BY Nome",'%' + nome + '%');
 
                 foreach (var restaurante in restaurantes)
                 {
@@ -315,12 +347,6 @@ namespace APIHungryHunters.Controllers
                         return BadRequest(erro4);
                     }
 
-                    if (restaurantesDTO.NumeroMesas <= 0)
-                    {
-                        var erro1 = new { Mensagem = "Adicione o número de mesas" };
-                        return BadRequest(erro1);
-                    }
-
                     if (string.IsNullOrWhiteSpace(restaurantesDTO.Distrito))
                     {
                         var erro1 = new { Mensagem = "Distrito inválido" };
@@ -377,61 +403,6 @@ namespace APIHungryHunters.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir brinquedo(s)");
             }
         }
-
-        [HttpPost("MenosMesasporId/{IdRestaurante}")]
-        public async Task<ActionResult> MenosMesasId(string IdRestaurante)
-        {
-            try
-            {
-                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
-                {
-                    var num = await db.SingleOrDefaultAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Id_restaurante = @0", IdRestaurante);
-
-                    if (num == null)
-                    {
-                        return NotFound($"Não foi encontrado nenhum restaurante com o Id: {IdRestaurante}. Insira outro Id.");
-                    }
-
-                    num.NumeroMesas -= 1;
-
-                    await db.UpdateAsync("restaurantes", "Id_restaurante", num);
-
-                    return NoContent();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
-            }
-        }
-
-        [HttpPost("MaisMesasporId/{IdRestaurante}")]
-        public async Task<ActionResult> MaisMesasId(string IdRestaurante)
-        {
-            try
-            {
-                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
-                {
-                    var num = await db.SingleOrDefaultAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Id_restaurante = @0", IdRestaurante);
-
-                    if (num == null)
-                    {
-                        return NotFound($"Não foi encontrado nenhum empresa com o Nipc: {IdRestaurante}. Insira outro Nipc.");
-                    }
-
-                    num.NumeroMesas += 1;
-
-                    await db.UpdateAsync("restaurantes", "Id_restaurante", num);
-
-                    return NoContent();
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
-            }
-        }
-
         private bool RestaurantesExists(long id)
         {
             return (_context.Restaurantes?.Any(e => e.Id_restaurante == id)).GetValueOrDefault();

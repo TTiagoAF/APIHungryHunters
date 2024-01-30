@@ -19,12 +19,17 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
-    {
-        builder.AllowAnyOrigin()
-        .AllowAnyMethod()
-        .AllowAnyHeader();
-    });
+    
+        options.AddDefaultPolicy( 
+        policy =>
+        {
+            policy.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+        });
+
+       
+
 });
 
 builder.Services.AddSingleton(builder.Configuration);
@@ -63,6 +68,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
 IConfiguration configuration = app.Configuration;
 IWebHostEnvironment environment = app.Environment;
 
