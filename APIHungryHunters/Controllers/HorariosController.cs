@@ -51,7 +51,7 @@ namespace APIHungryHunters.Controllers
             AutoMapper.IMapper mapper = config.CreateMapper();
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var HorariosporRestauranteId = await db.FetchAsync<Horarios>("SELECT * FROM horariosreservas WHERE RestauranteId = @0", RestauranteId);
+                var HorariosporRestauranteId = await db.FetchAsync<Horarios>("SELECT * FROM horariosreservas WHERE RestauranteId = @0 ORDER BY HoraReserva", RestauranteId);
                 if (HorariosporRestauranteId == null)
                 {
                     return NotFound($"Não foi encontrada nenhum horário com o Id: {RestauranteId}. Insira outro Id.");

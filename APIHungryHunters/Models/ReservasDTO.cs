@@ -16,7 +16,7 @@ namespace APIHungryHunters.Models
         [ForeignKey("MesaId")]
         public DateTime Data_reserva { get; set; }
         public string Horario { get; set; }
-        public int Mesa { get; set; }
         public int Quantidade_pessoa { get; set; }
+        public string Estado { get; set; }
     }
 }

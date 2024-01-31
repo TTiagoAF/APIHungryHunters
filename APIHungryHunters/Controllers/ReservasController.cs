@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-    
+
     [Route("api/[controller]")]
     [ApiController]
     public class ReservasController : ControllerBase
@@ -26,6 +26,115 @@ namespace APIHungryHunters.Controllers
         }
 
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
+
+        [HttpGet("ListadeReservaspor{ContaId}")]
+        public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservasporContaId(int ContaId)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Reservas, TodasReservasDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var ReservasporContaId = await db.FetchAsync<Reservas>("SELECT * FROM reservas WHERE ContaId = @0 ORDER BY Data_reserva", ContaId);
+
+                if (ReservasporContaId == null || ReservasporContaId.Count == 0)
+                {
+                    return NotFound($"Não foi encontrada nenhuma reserva com o Id: {ContaId}. Insira outro Id.");
+                }
+
+                var responseItems = new List<TodasReservasDTO>();
+
+                foreach (var reserva in ReservasporContaId)
+                {
+                    var IdContas = ObterNomeDoRestaurante(reserva.RestauranteId);
+                    var Mesa = ObterNomeDaMesa(reserva.MesaId);
+                    var Cliente = ObterNomeDoCliente(reserva.ContaId);
+
+                    reserva.NomeRestaurante = IdContas;
+                    reserva.NomeMesa = Mesa;
+                    reserva.NomeCliente = Cliente;
+
+                    var responseItem = mapper.Map<TodasReservasDTO>(reserva);
+                    responseItems.Add(responseItem);
+                }
+
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ListadeReservascom{RestauranteId}")]
+        public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservascomRestauranteId(int RestauranteId)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Reservas, TodasReservasDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var ReservasporContaId = await db.FetchAsync<Reservas>("SELECT * FROM reservas WHERE RestauranteId = @0 ORDER BY Data_reserva", RestauranteId);
+
+                if (ReservasporContaId == null || ReservasporContaId.Count == 0)
+                {
+                    return NotFound($"Não foi encontrada nenhuma reserva com o Id: {RestauranteId}. Insira outro Id.");
+                }
+
+                var responseItems = new List<TodasReservasDTO>();
+
+                foreach (var reserva in ReservasporContaId)
+                {
+                    var IdContas = ObterNomeDoRestaurante(reserva.RestauranteId);
+                    var Mesa = ObterNomeDaMesa(reserva.MesaId);
+                    var Cliente = ObterNomeDoCliente(reserva.ContaId);
+
+                    reserva.NomeRestaurante = IdContas;
+                    reserva.NomeMesa = Mesa;
+                    reserva.NomeCliente = Cliente;
+
+                    var responseItem = mapper.Map<TodasReservasDTO>(reserva);
+                    responseItems.Add(responseItem);
+                }
+
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ObterNomeDaMesa")]
+        public string ObterNomeDaMesa(int idmesa)
+        {
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var usuario = db.FirstOrDefault<Mesas>("SELECT Nome FROM mesas WHERE Id_mesa = @0", idmesa);
+
+                return usuario.Nome;
+            }
+        }
+
+        [HttpGet("ObterNomeDoCliente")]
+        public string ObterNomeDoCliente(int idconta)
+        {
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var usuario = db.FirstOrDefault<Contas>("SELECT Username FROM contas WHERE Id_conta = @0", idconta);
+
+                return usuario.Username;
+            }
+        }
+
+        [HttpGet("ObterNomeDoRestaurante")]
+        public string ObterNomeDoRestaurante(int idrestaurante)
+        {
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var usuario = db.FirstOrDefault<Restaurantes>("SELECT Nome FROM restaurantes WHERE Id_restaurante = @0", idrestaurante);
+
+                return usuario.Nome;
+            }
+        }
 
         [HttpPost("AdicionarReserva")]
         public async Task<ActionResult> AdicionarReserva([FromBody] List<ReservasDTO> reservasDTOs)
@@ -40,6 +149,11 @@ namespace APIHungryHunters.Controllers
             {
                 foreach (var reservaDTO in reservasDTOs)
                 {
+                    if (string.IsNullOrWhiteSpace(reservaDTO.Horario))
+                    {
+                        var erro1 = new { Mensagem = "Selecione um horário" };
+                        return BadRequest(erro1);
+                    }
                     if (reservaDTO.Data_reserva.Year != DateTime.Now.Year)
                     {
                         var erro5 = new { Mensagem = "Faça a reserva para este ano" };
@@ -106,10 +220,10 @@ namespace APIHungryHunters.Controllers
                             });
 
                     if (validData != null || validData2 != null)
-                    {                       
+                    {
                         var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
                         return BadRequest(erro5);
-                         
+
                     }
 
                     var diasemana = reservaDTO.Data_reserva.DayOfWeek;
@@ -125,7 +239,7 @@ namespace APIHungryHunters.Controllers
                     {
                         if (validSegunda.Segunda == "true")
                         {
-                            if(validDia == null)
+                            if (validDia == null)
                             {
                                 var erro5 = new { Mensagem = "O restaurante está de folga nesta data" };
                                 return BadRequest(erro5);
@@ -226,16 +340,35 @@ namespace APIHungryHunters.Controllers
                         "AND MONTH(Data_reserva) = @Mes " +
                         "AND DAY(Data_reserva) = @Dia " +
                         "AND Horario = @Horario " +
-                        "AND Mesa = @Mesa",
+                        "AND MesaId = @Mesa",
                         new
                         {
                             reservaDTO.RestauranteId,
+                            Ano = reservaDTO.Data_reserva.Year,
+                            Mes = reservaDTO.Data_reserva.Month,
+                            Dia = reservaDTO.Data_reserva.Day,
+                            Horario = reservaDTO.Horario,
                             Mesa = reservaDTO.MesaId,
                         });
 
                     if (validReserva != null)
                     {
                         var erro5 = new { Mensagem = "Essa mesa já está ocupada" };
+                        return BadRequest(erro5);
+                    }
+
+                    var validgrupo = await db.FirstOrDefaultAsync<Mesas>(
+                        "SELECT * FROM mesas WHERE RestauranteId = @RestauranteId " +
+                        "AND Maximo_pessoas < @Maximo",
+                        new
+                        {
+                            reservaDTO.RestauranteId,
+                            Maximo = reservaDTO.Quantidade_pessoa,
+                        });
+
+                    if (validgrupo != null)
+                    {
+                        var erro5 = new { Mensagem = "Quantidade de pessoas inválidas para essa mesa" };
                         return BadRequest(erro5);
                     }
 
@@ -246,6 +379,32 @@ namespace APIHungryHunters.Controllers
             }
             return Ok();
         }
+
+        [HttpPost("EliminarReservas/{ReservaId}")]
+        public async Task<ActionResult> DeleteReservas(int ReservaId)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var todasreservas = await db.SingleOrDefaultAsync<Reservas>("SELECT * FROM reservas WHERE Id_reserva = @0", ReservaId);
+
+                    if (todasreservas == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhuma reserva com o id: {ReservaId}.");
+                    }
+                    else
+                    {
+                        await db.DeleteAsync("reservas", "Id_reserva", todasreservas);
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir horario");
+            }
+        }
     }
 }
-
