@@ -95,12 +95,6 @@ namespace APIHungryHunters.Models
                .HasConstraintName("fk_idrestaurante_reservas");
 
             modelBuilder.Entity<Reservas>()
-               .HasOne(ot => ot.Contas)
-               .WithMany(r => r.Reservas)
-               .HasForeignKey(ot => ot.ContaId)
-               .HasConstraintName("fk_idconta");
-
-            modelBuilder.Entity<Reservas>()
                .HasOne(ot => ot.Mesas)
                .WithMany(r => r.Reservas)
                .HasForeignKey(ot => ot.MesaId)

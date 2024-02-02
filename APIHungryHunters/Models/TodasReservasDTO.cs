@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using PetaPoco;
 
 namespace APIHungryHunters.Models
 {
@@ -11,7 +12,7 @@ namespace APIHungryHunters.Models
         [ForeignKey("RestauranteId")]
         public string NomeRestaurante { get; set; }
         public int ContaId { get; set; }
-        [ForeignKey("ContaId")]
+        [ResultColumn]
         public string NomeCliente { get; set; }
         public int MesaId { get; set; }
         [ForeignKey("MesaId")]

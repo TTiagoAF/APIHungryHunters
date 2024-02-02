@@ -13,6 +13,7 @@ namespace APIHungryHunters.Models
         public int NumeroMesas { get; set; }
         public string Distrito { get; set; }
         public string Coordenadas { get; set; }
+        public string Telemovel { get; set; }
         public string Descricao { get; set; }
         public int CapacidadeGrupo { get; set; }
         public string Autorizado { get; set; }

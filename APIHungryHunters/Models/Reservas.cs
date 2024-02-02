@@ -15,7 +15,6 @@ namespace APIHungryHunters.Models
         [ResultColumn]
         public string NomeRestaurante { get; set; }
         public int ContaId { get; set; }
-        [ForeignKey("ContaId")]
         [ResultColumn]
         public virtual Contas Contas { get; set; }
         [ResultColumn]

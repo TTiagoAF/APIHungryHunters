@@ -359,6 +359,12 @@ namespace APIHungryHunters.Controllers
                         return BadRequest(erro1);
                     }
 
+                    if (restaurantesDTO.Telemovel.Length != 9 || restaurantesDTO.Telemovel == "")
+                    {
+                        var erro1 = new { Mensagem = "Telemóvel inválido" };
+                        return BadRequest(erro1);
+                    }
+
                     if (string.IsNullOrWhiteSpace(restaurantesDTO.Descricao))
                     {
                         var erro1 = new { Mensagem = "Descrição inválida" };
