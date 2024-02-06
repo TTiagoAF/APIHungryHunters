@@ -160,6 +160,43 @@ namespace APIHungryHunters.Controllers
             }
         }
 
+        [HttpGet("ListadeRestaurantesMelhorComida")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseMelhorComida()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+                cfg.CreateMap<Avaliacoes, AvaliacoesDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes");
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var avaliacoes = await db.FetchAsync<Avaliacoes>("SELECT *, AVG(Comida) AS media FROM avaliacoes WHERE RestauranteId = @0 GROUP BY RestauranteId ORDER BY media DESC LIMIT 5", restaurante.Id_restaurante);
+                    foreach (var avaliacao in avaliacoes)
+                    {
+                        var restaurantes2 = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Id_restaurante = @0", avaliacao.RestauranteId);
+                        foreach (var restaurante2 in restaurantes2)
+                        {
+                            var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante2.Id_restaurante);
+                            restaurante2.Categorias = categorias;
+                        }
+                        var responseItems = mapper.Map<List<TodosRestaurantes>>(restaurantes2);
+
+                        return Ok(responseItems);
+                    }
+                    
+                }
+
+                return Ok();
+            }
+        }
+
         [HttpGet("ListadeRestaurantesComCategoriasFaro")]
         public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseCategoriasFaro()
         {

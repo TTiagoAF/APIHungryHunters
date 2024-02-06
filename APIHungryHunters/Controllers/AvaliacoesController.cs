@@ -38,7 +38,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var AvaliacoesporContaId = await db.FetchAsync<Avaliacoes>("SELECT * FROM avaliacoes WHERE ContaId = @0 ORDER BY Comida DESC", ContaId);
+                var AvaliacoesporContaId = await db.FetchAsync<Avaliacoes>("SELECT * FROM avaliacoes WHERE ContaId = @0", ContaId);
 
                 if (AvaliacoesporContaId == null || AvaliacoesporContaId.Count == 0)
                 {
@@ -142,7 +142,7 @@ namespace APIHungryHunters.Controllers
                     avaliacoesDTO.Id_avaliacao = ObterIdAvaliacoes(avaliacoesDTO.ContaId);
 
                     var TemAvaliacao = await db.FirstOrDefaultAsync<Avaliacoes>(
-                        "SELECT * FROM reservas WHERE ContaId = @ContaId " +
+                        "SELECT * FROM avaliacoes WHERE ContaId = @ContaId " +
                         "AND RestauranteId = @RestauranteId",
                             new
                             {
