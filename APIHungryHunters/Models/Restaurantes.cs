@@ -44,5 +44,7 @@ namespace APIHungryHunters.Models
         public List<Reservas> Reservas { get; set; }
         [ResultColumn]
         public List<Mesas> Mesas { get; set; }
+        [ResultColumn]
+        public List<Avaliacoes> Avaliacoes { get; set; }
     }
 }

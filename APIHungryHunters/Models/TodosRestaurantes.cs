@@ -19,5 +19,6 @@ namespace APIHungryHunters.Models
         public string Autorizado { get; set; }
         public List<Categorias> Categorias { get; set; }
         public List<RestauranteMenu> RestauranteMenus { get; set; }
+        public List<Avaliacoes> Avaliacoes { get; set; }
     }
 }

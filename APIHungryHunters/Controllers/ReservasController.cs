@@ -688,23 +688,25 @@ namespace APIHungryHunters.Controllers
                         return NotFound($"Não foi encontrado nenhuma reserva com o Id: {IdReserva}. Insira outro Id.");
                     }
 
-                    if(estado.Data_reserva.Year <= DateTime.Now.Year)
+                    if (Estado == "Cancelado")
                     {
-                        if(estado.Data_reserva.Month <= DateTime.Now.Month)
+                        if (estado.Data_reserva.Year <= DateTime.Now.Year)
                         {
-                            if(estado.Data_reserva.Day <= DateTime.Now.Day)
+                            if (estado.Data_reserva.Month <= DateTime.Now.Month)
                             {
-                                int resultadoComparacao = string.Compare(DateTime.Now.ToString("HH:mm"), estado.Horario);
-
-                                if (resultadoComparacao <= 0)
+                                if (estado.Data_reserva.Day <= DateTime.Now.Day)
                                 {
-                                    var erro5 = new { Mensagem = "Já não podes cancelar esta reserva já passou do horário" };
-                                    return BadRequest(erro5);
+                                    int resultadoComparacao = string.Compare(DateTime.Now.ToString("HH:mm"), estado.Horario);
+
+                                    if (resultadoComparacao <= 0)
+                                    {
+                                        var erro5 = new { Mensagem = "Já não podes cancelar esta reserva já passou do horário" };
+                                        return BadRequest(erro5);
+                                    }
                                 }
                             }
                         }
                     }
-
                     estado.Estado = Estado;
 
                     await db.UpdateAsync("reservas", "Id_reserva", estado);

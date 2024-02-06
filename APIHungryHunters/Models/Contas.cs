@@ -15,5 +15,7 @@ namespace APIHungryHunters.Models
         public string Password { get; set; }
         [ResultColumn]
         public List<Reservas> Reservas { get; set; }
+        [ResultColumn]
+        public List<Avaliacoes> Avaliacoes { get; set; }
     }
 }

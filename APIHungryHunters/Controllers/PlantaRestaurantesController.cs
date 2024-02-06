@@ -96,6 +96,8 @@ namespace APIHungryHunters.Controllers
         [HttpGet("ObterPlanta/{restauranteId}")]
         public IActionResult ObterPlanta(int restauranteId)
         {
+            string pastaImagens = Path.Combine(".\\ImagensPlanta\\");
+
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
                 var plantaRestaurante = db.Fetch<PlantaRestaurante>("SELECT * FROM PlantaRestaurante WHERE RestauranteId = @RestauranteId", new { RestauranteId = restauranteId });
@@ -105,7 +107,13 @@ namespace APIHungryHunters.Controllers
                     return NotFound("Nenhuma imagem encontrada para este restaurante.");
                 }
 
-                var caminhosImagens = plantaRestaurante.Select(plantasRestaurante => plantasRestaurante.Planta_titulo);
+                List<string> caminhosImagens = new List<string>();
+
+                foreach (var plantasRestaurante in plantaRestaurante)
+                {
+                    string caminhoImagem = Path.GetFullPath(pastaImagens + plantasRestaurante.Planta_titulo);
+                    caminhosImagens.Add(caminhoImagem);
+                }
 
                 return Ok(new { caminhosImagens });
             }
