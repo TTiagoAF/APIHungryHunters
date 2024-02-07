@@ -173,27 +173,145 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var restaurantes = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes");
+                var query = "SELECT r.*, AVG(a.Comida) AS MediaComida " +
+                            "FROM restaurantes r " +
+                            "LEFT JOIN avaliacoes a ON r.Id_restaurante = a.RestauranteId " +
+                            "GROUP BY r.Id_restaurante " +
+                            "ORDER BY MediaComida DESC LIMIT 5";
+
+                var restaurantes = await db.FetchAsync<TodosRestaurantes>(query);
 
                 foreach (var restaurante in restaurantes)
                 {
-                    var avaliacoes = await db.FetchAsync<Avaliacoes>("SELECT *, AVG(Comida) AS media FROM avaliacoes WHERE RestauranteId = @0 GROUP BY RestauranteId ORDER BY media DESC LIMIT 5", restaurante.Id_restaurante);
-                    foreach (var avaliacao in avaliacoes)
-                    {
-                        var restaurantes2 = await db.FetchAsync<Restaurantes>("SELECT * FROM restaurantes WHERE Id_restaurante = @0", avaliacao.RestauranteId);
-                        foreach (var restaurante2 in restaurantes2)
-                        {
-                            var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante2.Id_restaurante);
-                            restaurante2.Categorias = categorias;
-                        }
-                        var responseItems = mapper.Map<List<TodosRestaurantes>>(restaurantes2);
-
-                        return Ok(responseItems);
-                    }
-                    
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
                 }
 
-                return Ok();
+                return Ok(restaurantes);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesMelhorConforto")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseMelhorConforto()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+                cfg.CreateMap<Avaliacoes, AvaliacoesDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var query = "SELECT r.*, AVG(a.Conforto) AS MediaConforto " +
+                            "FROM restaurantes r " +
+                            "LEFT JOIN avaliacoes a ON r.Id_restaurante = a.RestauranteId " +
+                            "GROUP BY r.Id_restaurante " +
+                            "ORDER BY MediaConforto DESC LIMIT 5";
+
+                var restaurantes = await db.FetchAsync<TodosRestaurantes>(query);
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+
+                return Ok(restaurantes);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesMaisBonito")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseMaisBonito()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+                cfg.CreateMap<Avaliacoes, AvaliacoesDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var query = "SELECT r.*, AVG(a.Beleza) AS MediaBeleza " +
+                            "FROM restaurantes r " +
+                            "LEFT JOIN avaliacoes a ON r.Id_restaurante = a.RestauranteId " +
+                            "GROUP BY r.Id_restaurante " +
+                            "ORDER BY MediaBeleza DESC LIMIT 5";
+
+                var restaurantes = await db.FetchAsync<TodosRestaurantes>(query);
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+
+                return Ok(restaurantes);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesMelhorAtendimento")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseMelhorAtendimento()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+                cfg.CreateMap<Avaliacoes, AvaliacoesDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var query = "SELECT r.*, AVG(a.Atendimento) AS MediaAtendimento " +
+                            "FROM restaurantes r " +
+                            "LEFT JOIN avaliacoes a ON r.Id_restaurante = a.RestauranteId " +
+                            "GROUP BY r.Id_restaurante " +
+                            "ORDER BY MediaAtendimento DESC LIMIT 5";
+
+                var restaurantes = await db.FetchAsync<TodosRestaurantes>(query);
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+
+                return Ok(restaurantes);
+            }
+        }
+
+        [HttpGet("ListadeRestaurantesMaisRapido")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestauranteseMaisRapido()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Restaurantes, TodosRestaurantes>();
+                cfg.CreateMap<Categorias, CategoriasDTO>();
+                cfg.CreateMap<Avaliacoes, AvaliacoesDTO>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var query = "SELECT r.*, AVG(a.Velocidade) AS MediaVelocidade " +
+                            "FROM restaurantes r " +
+                            "LEFT JOIN avaliacoes a ON r.Id_restaurante = a.RestauranteId " +
+                            "GROUP BY r.Id_restaurante " +
+                            "ORDER BY MediaVelocidade DESC LIMIT 5";
+
+                var restaurantes = await db.FetchAsync<TodosRestaurantes>(query);
+
+                foreach (var restaurante in restaurantes)
+                {
+                    var categorias = await db.FetchAsync<Categorias>("SELECT * FROM restaurantecategorias WHERE RestauranteId = @0", restaurante.Id_restaurante);
+                    restaurante.Categorias = categorias;
+                }
+
+                return Ok(restaurantes);
             }
         }
 

@@ -25,5 +25,7 @@ namespace APIHungryHunters.Models
         public Decimal Atendimento { get; set; }
         public Decimal Velocidade { get; set; }
         public string Comentario { get; set; }
+        [ResultColumn]
+        public double MediaConforto { get; set; }
     }
 }
