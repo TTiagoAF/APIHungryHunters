@@ -92,11 +92,9 @@ namespace APIHungryHunters.Controllers
 
             }
         }
-
         [HttpGet("ObterPlanta/{restauranteId}")]
         public IActionResult ObterPlanta(int restauranteId)
         {
-            string pastaImagens = Path.Combine(".\\ImagensPlanta\\");
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
@@ -111,10 +109,9 @@ namespace APIHungryHunters.Controllers
 
                 foreach (var plantasRestaurante in plantaRestaurante)
                 {
-                    string caminhoImagem = Path.GetFullPath(pastaImagens + plantasRestaurante.Planta_titulo);
+                    string caminhoImagem = plantasRestaurante.Planta_titulo;
                     caminhosImagens.Add(caminhoImagem);
                 }
-
                 return Ok(new { caminhosImagens });
             }
         }

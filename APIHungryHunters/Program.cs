@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using APIHungryHunters.Models;
 using System.Text;
 using System.Configuration;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,20 +18,7 @@ builder.Services.AddDbContext<TodoContext>(opt =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddCors(options =>
-{
-    
-        options.AddDefaultPolicy( 
-        policy =>
-        {
-            policy.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader();
-        });
-
-       
-
-});
+builder.Services.AddCors();
 
 builder.Services.AddSingleton(builder.Configuration);
 
@@ -58,7 +46,7 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnC
     .AddEnvironmentVariables();
 
 var app = builder.Build();
-
+app.UseCors(opcoes => opcoes.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -69,11 +57,25 @@ app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions()
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), @"ImagensPlanta")),
+    RequestPath = new PathString("/ImagensPlanta")
+});
+app.UseDirectoryBrowser(new DirectoryBrowserOptions()
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), @"ImagensPlanta")),
+    RequestPath = new PathString("/ImagensPlanta")
+});
+
 IConfiguration configuration = app.Configuration;
 IWebHostEnvironment environment = app.Environment;
 
-app.UseCors();
-if(!Directory.Exists("Imagens"))
+
+if (!Directory.Exists("Imagens"))
 {
     Directory.CreateDirectory("Imagens");
 }
