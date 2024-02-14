@@ -110,6 +110,57 @@ namespace APIHungryHunters.Controllers
             
             return BadRequest("A imagem não foi fornecida ou é inválida.");
         }
+
+        [HttpGet("ObterImagensRestaurante/{restauranteId}")]
+        public IActionResult ObterImagensRestaurante(int restauranteId)
+        {
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var ImagensRestaurante = db.Fetch<FotosRestaurante>("SELECT * FROM fotosrestaurante WHERE RestauranteId = @RestauranteId", new { RestauranteId = restauranteId });
+
+                if (ImagensRestaurante == null || ImagensRestaurante.Count() == 0)
+                {
+                    return NotFound("Nenhuma imagem encontrada para este restaurante.");
+                }
+
+                List<string> caminhosImagens = new List<string>();
+
+                foreach (var ImagemRestaurante in ImagensRestaurante)
+                {
+                    string caminhoImagem = ImagemRestaurante.Foto_titulo;
+                    caminhosImagens.Add(caminhoImagem);
+                }
+                return Ok(new { caminhosImagens });
+            }
+        }
+
+        [HttpPost("DeleteFotosRestaurante/{nome}")]
+        public async Task<ActionResult> DeleteFotosRestaurantes(string nome)
+        {
+            try
+            {
+                using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+                {
+                    var imagemdelete = await db.SingleOrDefaultAsync<FotosRestaurante>("SELECT * FROM fotosrestaurante WHERE Foto_titulo = @0", nome);
+
+                    if (imagemdelete == null)
+                    {
+                        return NotFound($"Não foi encontrado nenhum Restaurante com o nome: {nome}. Insira outro nome.");
+                    }
+                    else
+                    {
+                        await db.DeleteAsync("fotosrestaurante", "Foto_titulo", imagemdelete);
+                    }
+                }
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir brinquedo(s)");
+            }
+        }
     }
 }
 

@@ -61,14 +61,14 @@ app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions()
 {
     FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), @"ImagensPlanta")),
-    RequestPath = new PathString("/ImagensPlanta")
+        Path.Combine(Directory.GetCurrentDirectory(), @"Imagens")),
+    RequestPath = new PathString("/Imagens")
 });
 app.UseDirectoryBrowser(new DirectoryBrowserOptions()
 {
     FileProvider = new PhysicalFileProvider(
-        Path.Combine(Directory.GetCurrentDirectory(), @"ImagensPlanta")),
-    RequestPath = new PathString("/ImagensPlanta")
+        Path.Combine(Directory.GetCurrentDirectory(), @"Imagens")),
+    RequestPath = new PathString("/Imagens")
 });
 
 IConfiguration configuration = app.Configuration;
@@ -78,14 +78,6 @@ IWebHostEnvironment environment = app.Environment;
 if (!Directory.Exists("Imagens"))
 {
     Directory.CreateDirectory("Imagens");
-}
-if (!Directory.Exists("ImagensMenu"))
-{
-    Directory.CreateDirectory("ImagensMenu");
-}
-if (!Directory.Exists("ImagensPlanta"))
-{
-    Directory.CreateDirectory("ImagensPlanta");
 }
 app.MapControllers();
 

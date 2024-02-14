@@ -23,8 +23,6 @@ namespace APIHungryHunters.Models
         public int CapacidadeGrupo { get; set; }
         public string Autorizado { get; set; }
         [ResultColumn]
-        public List<PlantaRestaurante> PlantaRestaurantes { get; set; }
-        [ResultColumn]
         public List<RestauranteMenu> RestauranteMenus { get; set; }
         [ResultColumn]
         public List<Categorias> Categorias { get; set; }
@@ -36,8 +34,6 @@ namespace APIHungryHunters.Models
         public List<DiasFestivos> DiasFestivos { get; set; }
         [ResultColumn]
         public List<Horarios> Horarios { get; set; }
-        [ResultColumn]
-        public List<ImagemMenu> ImagemMenus { get; set; }
         [ResultColumn]
         public List<FotosRestaurante> FotosRestaurantes { get; set; }
         [ResultColumn]

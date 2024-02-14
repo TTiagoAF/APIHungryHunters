@@ -74,7 +74,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var AvaliacoesRestauranteId = await db.FetchAsync<Avaliacoes>("SELECT * FROM avaliacoes WHERE RestauranteId = @0 ORDER BY Comida DESC", RestauranteId);
+                var AvaliacoesRestauranteId = await db.FetchAsync<Avaliacoes>("SELECT * FROM avaliacoes WHERE RestauranteId = @0 ORDER BY Id_avaliacao ASC", RestauranteId);
 
                 if (AvaliacoesRestauranteId == null || AvaliacoesRestauranteId.Count == 0)
                 {
