@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AvaliacoesController : ControllerBase
@@ -48,6 +48,42 @@ namespace APIHungryHunters.Controllers
                 var responseItems = new List<TodasAvaliacoes>();
 
                 foreach (var avaliacoes in AvaliacoesporContaId)
+                {
+                    var IdContas = ObterNomeDoRestaurante(avaliacoes.RestauranteId);
+                    var Cliente = ObterNomeDoCliente(avaliacoes.ContaId);
+
+                    avaliacoes.NomeRestaurante = IdContas;
+                    avaliacoes.NomeCliente = Cliente;
+
+                    var responseItem = mapper.Map<TodasAvaliacoes>(avaliacoes);
+                    responseItems.Add(responseItem);
+                }
+
+                return Ok(responseItems);
+            }
+        }
+
+        [HttpGet("ListadeAvaliacoesLimitadacom{RestauranteId}")]
+        public async Task<ActionResult<IEnumerable<TodasAvaliacoes>>> ObterAvaliacoesLimitadacomRestauranteId(int RestauranteId)
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<Avaliacoes, TodasAvaliacoes>();
+            });
+            AutoMapper.IMapper mapper = config.CreateMapper();
+
+            using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+            {
+                var AvaliacoesRestauranteId = await db.FetchAsync<Avaliacoes>("SELECT * FROM avaliacoes WHERE RestauranteId = @0 ORDER BY Id_avaliacao ASC LIMIT 3", RestauranteId);
+
+                if (AvaliacoesRestauranteId == null || AvaliacoesRestauranteId.Count == 0)
+                {
+                    return NotFound($"Não foi encontrada nenhuma avaliação com o Id: {RestauranteId}. Insira outro Id.");
+                }
+
+                var responseItems = new List<TodasAvaliacoes>();
+
+                foreach (var avaliacoes in AvaliacoesRestauranteId)
                 {
                     var IdContas = ObterNomeDoRestaurante(avaliacoes.RestauranteId);
                     var Cliente = ObterNomeDoCliente(avaliacoes.ContaId);

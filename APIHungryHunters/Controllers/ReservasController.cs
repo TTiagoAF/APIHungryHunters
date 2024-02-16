@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class ReservasController : ControllerBase
@@ -731,7 +731,7 @@ namespace APIHungryHunters.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }

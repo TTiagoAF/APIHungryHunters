@@ -166,7 +166,7 @@ public class ContasController : ControllerBase
                     var erro7 = new { Mensagem = "Tens de ter no minimo 18 anos" };
                     return BadRequest(erro7);
                 }
-                if (birthYear3 >= 18)
+                if (birthYear3 == 18)
                 {
                     if (birthYear1 < 0)
                     {                        
@@ -174,9 +174,9 @@ public class ContasController : ControllerBase
                          return BadRequest(erro8);                        
                     }
                 }
-                if (birthYear3 >= 18)
+                if (birthYear3 == 18)
                 {
-                    if (birthYear1 >= 0)
+                    if (birthYear1 == 0)
                     {
                         if (birthYear2 < 0)
                         {

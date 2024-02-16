@@ -22,6 +22,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
     public class RestaurantesController : ControllerBase
@@ -588,7 +589,7 @@ namespace APIHungryHunters.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 
@@ -603,7 +604,7 @@ namespace APIHungryHunters.Controllers
 
                     if (num == null)
                     {
-                        return NotFound($"Não foi encontrado nenhum empresa com o Nipc: {IdRestaurante}. Insira outro Nipc.");
+                        return NotFound($"Não foi encontrado nenhum restaurante com o Id: {IdRestaurante}. Insira outro Id.");
                     }
 
                     num.CapacidadeGrupo += 1;
@@ -615,7 +616,7 @@ namespace APIHungryHunters.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
 

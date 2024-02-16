@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-    
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FotosRestaurantesController : ControllerBase
@@ -64,7 +64,7 @@ namespace APIHungryHunters.Controllers
 
                 if (fotosRestaurante == null)
                 {
-                    return NotFound("PlantaRestaurante não encontrado.");
+                    return NotFound("Foto do restaurante não encontrada.");
                 }
 
                 var fotosRestauranteDto = mapper.Map<List<FotosRestauranteDTO>>(fotosRestaurante);
@@ -104,7 +104,7 @@ namespace APIHungryHunters.Controllers
                         await db.InsertAsync("fotosrestaurante", "Id_fotos", true, imagemMenu);
                     }
 
-                    return Ok("FotosRestaurante adicionadas com sucesso!");
+                    return Ok("Fotos do restaurante adicionadas com sucesso!");
                 }
             }
             
@@ -146,11 +146,17 @@ namespace APIHungryHunters.Controllers
 
                     if (imagemdelete == null)
                     {
-                        return NotFound($"Não foi encontrado nenhum Restaurante com o nome: {nome}. Insira outro nome.");
+                        return NotFound($"Não foi encontrado nenhum Imagem com o nome: {nome}. Insira outro nome.");
                     }
                     else
                     {
                         await db.DeleteAsync("fotosrestaurante", "Foto_titulo", imagemdelete);
+
+                        var caminhoArquivo = $".\\Imagens\\{nome}";
+                        if (System.IO.File.Exists(caminhoArquivo))
+                        {
+                            System.IO.File.Delete(caminhoArquivo);
+                        }
                     }
                 }
 
@@ -158,7 +164,7 @@ namespace APIHungryHunters.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao excluir brinquedo(s)");
+                return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
     }
