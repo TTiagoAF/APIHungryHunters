@@ -13,8 +13,8 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace APIHungryHunters.Controllers
 {
-    [Authorize]
-    [Route("api/[controller]")]
+	[Authorize]
+	[Route("api/[controller]")]
     [ApiController]
     public class AvaliacoesController : ControllerBase
     {
@@ -63,7 +63,7 @@ namespace APIHungryHunters.Controllers
             }
         }
 
-        [HttpGet("ListadeAvaliacoesLimitadacom{RestauranteId}")]
+        [HttpGet("ListadeAvaliacoesLimitadacom")]
         public async Task<ActionResult<IEnumerable<TodasAvaliacoes>>> ObterAvaliacoesLimitadacomRestauranteId(int RestauranteId)
         {
             var config = new MapperConfiguration(cfg =>

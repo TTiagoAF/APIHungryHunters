@@ -29,5 +29,5 @@ namespace APIHungryHunters.Models
         public string Horario { get; set; }
         public int Quantidade_pessoa { get; set; }
         public string Estado { get; set; }
-    }
+	}
 }

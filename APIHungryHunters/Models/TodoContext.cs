@@ -24,8 +24,9 @@ namespace APIHungryHunters.Models
         public DbSet<Reservas> Reservas { get; set; } = null!;
         public DbSet<Mesas> Mesas { get; set; } = null!;
         public DbSet<Avaliacoes> Avaliacoes { get; set; } = null!;
+		public DbSet<Logs> Logs { get; set; } = null!;
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+		protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
             modelBuilder.Entity<RestauranteMenu>()
@@ -105,6 +106,12 @@ namespace APIHungryHunters.Models
                .WithMany(r => r.Avaliacoes)
                .HasForeignKey(ot => ot.ContaId)
                .HasConstraintName("fk_idconta_avaliacoes");
-        }      
+
+			modelBuilder.Entity<Logs>()
+			   .HasOne(ot => ot.Restaurante)
+			   .WithMany(r => r.Logs)
+			   .HasForeignKey(ot => ot.RestauranteId)
+			   .HasConstraintName("fk_idrestaurante_logs");
+		}      
     }
 }

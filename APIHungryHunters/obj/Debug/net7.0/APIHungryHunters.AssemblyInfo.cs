@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("APIHungryHunters")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+ecd6832fbf4d6e956526694ec62a96b49e874d53")]
 [assembly: System.Reflection.AssemblyProductAttribute("APIHungryHunters")]
 [assembly: System.Reflection.AssemblyTitleAttribute("APIHungryHunters")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

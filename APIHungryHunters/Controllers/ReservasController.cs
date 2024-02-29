@@ -27,7 +27,27 @@ namespace APIHungryHunters.Controllers
 
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
 
-        [HttpGet("ListadeReservaspor{ContaId}")]
+		[HttpGet("ListadeReservaspor/{IdReservas}")]
+		public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservasporId(int IdReservas)
+		{
+			var config = new MapperConfiguration(cfg =>
+			{
+				cfg.CreateMap<Reservas, TodasReservasDTO>();
+			});
+			AutoMapper.IMapper mapper = config.CreateMapper();
+			using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+			{
+				var HorariosporId = await db.FetchAsync<Reservas>("SELECT * FROM reservas WHERE Id_reserva = @0", IdReservas);
+				if (HorariosporId == null)
+				{
+					return NotFound($"Não foi encontrada nenhum horário com o Id: {IdReservas}. Insira outro Id.");
+				}
+				var responseItems = mapper.Map<List<TodasReservasDTO>>(HorariosporId);
+				return Ok(responseItems);
+			}
+		}
+
+		[HttpGet("ListadeReservaspor{ContaId}")]
         public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservasporContaId(int ContaId)
         {
             var config = new MapperConfiguration(cfg =>
@@ -206,7 +226,7 @@ namespace APIHungryHunters.Controllers
                     "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
                     "AND YEAR(InicioFerias) = @Ano " +
                     "AND MONTH(InicioFerias) = @Mes " +
-                    "AND DAY(InicioFerias) <= @Dia",
+                    "AND DAY(InicioFerias) >= @Dia",
                      new
                      {
                          reservaDTO.RestauranteId,
@@ -385,11 +405,13 @@ namespace APIHungryHunters.Controllers
 
                     var validgrupo = await db.FirstOrDefaultAsync<Mesas>(
                         "SELECT * FROM mesas WHERE RestauranteId = @RestauranteId " +
-                        "AND Maximo_pessoas < @Maximo",
+						"AND Id_mesa = @Mesa " +
+						"AND Maximo_pessoas < @Maximo",
                         new
                         {
                             reservaDTO.RestauranteId,
-                            Maximo = reservaDTO.Quantidade_pessoa,
+							Mesa = reservaDTO.MesaId,
+							Maximo = reservaDTO.Quantidade_pessoa,
                         });
 
                     if (validgrupo != null)
@@ -470,7 +492,7 @@ namespace APIHungryHunters.Controllers
                     "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
                     "AND YEAR(InicioFerias) = @Ano " +
                     "AND MONTH(InicioFerias) = @Mes " +
-                    "AND DAY(InicioFerias) <= @Dia",
+                    "AND DAY(InicioFerias) >= @Dia",
                      new
                      {
                          reservaDTO.RestauranteId,
@@ -505,8 +527,8 @@ namespace APIHungryHunters.Controllers
                                 Dia = reservaDTO.Data_reserva.Day,
                             });
 
-                    if (validData != null || validData2 != null)
-                    {
+					if (validData != null || validData2 != null)
+					{
                         var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
                         return BadRequest(erro5);
 
