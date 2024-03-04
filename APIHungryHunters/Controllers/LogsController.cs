@@ -27,8 +27,8 @@ namespace APIHungryHunters.Controllers
 
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
 
-        [HttpGet("ListadeLogscom{RestauranteId}")]
-        public async Task<ActionResult<IEnumerable<TodasLogs>>> ObterLogscomRestauranteId(int RestauranteId)
+        [HttpGet("ListadeLogscom")]
+        public async Task<ActionResult<IEnumerable<TodasLogs>>> ObterLogscomRestauranteId([FromQuery] int RestauranteId)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -38,7 +38,7 @@ namespace APIHungryHunters.Controllers
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
             {
-                var LogsRestauranteId = await db.FetchAsync<Logs>("SELECT * FROM logs WHERE RestauranteId = @0 ORDER BY teste ASC", RestauranteId);
+                var LogsRestauranteId = await db.FetchAsync<Logs>("SELECT * FROM logs WHERE RestauranteId = @0 ORDER BY teste DESC", RestauranteId);
 
                 if (LogsRestauranteId == null || LogsRestauranteId.Count == 0)
                 {

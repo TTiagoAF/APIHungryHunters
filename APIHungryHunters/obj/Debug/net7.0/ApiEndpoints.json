@@ -1173,7 +1173,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.LogsController",
     "Method": "ObterLogscomRestauranteId",
-    "RelativePath": "api/Logs/ListadeLogscom{RestauranteId}",
+    "RelativePath": "api/Logs/ListadeLogscom",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1181,7 +1181,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
