@@ -18,7 +18,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.AvaliacoesController",
     "Method": "ObterAvaliacoescomRestauranteId",
-    "RelativePath": "api/Avaliacoes/ListadeAvaliacoescom{RestauranteId}",
+    "RelativePath": "api/Avaliacoes/ListadeAvaliacoescom",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -26,7 +26,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -210,7 +210,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.CategoriasController",
     "Method": "ObterCategoriasporIdRestaurante",
-    "RelativePath": "api/Categorias/ListadeCategoriaspor{RestauranteId}",
+    "RelativePath": "api/Categorias/ListadeCategoriaspor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -218,7 +218,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -465,7 +465,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.DiasDeFuncionamentoesController",
     "Method": "ObterDiasporIdRestaurante",
-    "RelativePath": "api/DiasDeFuncionamentoes/ListadeDiaspor{RestauranteId}",
+    "RelativePath": "api/DiasDeFuncionamentoes/ListadeDiaspor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -473,7 +473,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -595,7 +595,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.DiasFestivosController",
     "Method": "ObterDiasFestivosporIdRestaurante",
-    "RelativePath": "api/DiasFestivos/ListadeDiasFestivospor{RestauranteId}",
+    "RelativePath": "api/DiasFestivos/ListadeDiasFestivospor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -603,7 +603,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -689,7 +689,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.EmpresasController",
     "Method": "GetEmpresasNome",
-    "RelativePath": "api/Empresas/Empresaspor{Razao_social}",
+    "RelativePath": "api/Empresas/Empresaspor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -697,7 +697,7 @@
       {
         "Name": "Razao_social",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -877,7 +877,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.FeriasController",
     "Method": "ObterFeriasporIdRestaurante",
-    "RelativePath": "api/Ferias/ListadeFeriaspor{RestauranteId}",
+    "RelativePath": "api/Ferias/ListadeFeriaspor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -885,7 +885,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1032,7 +1032,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.FotosRestaurantesController",
     "Method": "ObterImagensRestaurante",
-    "RelativePath": "api/FotosRestaurantes/ObterImagensRestaurante/{restauranteId}",
+    "RelativePath": "api/FotosRestaurantes/ObterImagensRestaurante",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1040,7 +1040,7 @@
       {
         "Name": "restauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -1105,7 +1105,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.HorariosController",
     "Method": "ObterHorariosporIdRestaurante",
-    "RelativePath": "api/Horarios/ListadeHorariospor{RestauranteId}",
+    "RelativePath": "api/Horarios/ListadeHorariospor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1113,7 +1113,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1303,7 +1303,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.MesasController",
     "Method": "ObterMesasporIdRestaurante",
-    "RelativePath": "api/Mesas/ListadeMesaspor{RestauranteId}",
+    "RelativePath": "api/Mesas/ListadeMesaspor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1311,7 +1311,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1403,7 +1403,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.ReservasController",
     "Method": "ObterReservascomRestauranteId",
-    "RelativePath": "api/Reservas/ListadeReservascom{RestauranteId}",
+    "RelativePath": "api/Reservas/ListadeReservascom",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1411,7 +1411,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1429,7 +1429,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.ReservasController",
     "Method": "ObterReservasporContaId",
-    "RelativePath": "api/Reservas/ListadeReservaspor{ContaId}",
+    "RelativePath": "api/Reservas/ListadeReservaspor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1437,7 +1437,7 @@
       {
         "Name": "ContaId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1455,7 +1455,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.ReservasController",
     "Method": "ObterReservasporId",
-    "RelativePath": "api/Reservas/ListadeReservaspor/{IdReservas}",
+    "RelativePath": "api/Reservas/ListadeReservasporIdReservas/{IdReservas}",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1663,7 +1663,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.RestauranteMenusController",
     "Method": "ObterMenusporIdRestaurante",
-    "RelativePath": "api/RestauranteMenus/ListadeMenuspor{RestauranteId}",
+    "RelativePath": "api/RestauranteMenus/ListadeMenuspor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1671,7 +1671,7 @@
       {
         "Name": "RestauranteId",
         "Type": "System.Int32",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -1731,7 +1731,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.RestaurantesController",
     "Method": "GetRestaurantes",
-    "RelativePath": "api/Restaurantes/BuscarRestaurantepor{id}",
+    "RelativePath": "api/Restaurantes/BuscarRestaurantepor",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -1739,7 +1739,7 @@
       {
         "Name": "id",
         "Type": "System.Int64",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -2025,7 +2025,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.RestaurantesController",
     "Method": "PesquisaDeRestaurantes",
-    "RelativePath": "api/Restaurantes/PesquisaDeRestaurantes{nome}",
+    "RelativePath": "api/Restaurantes/PesquisaDeRestaurante",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -2033,7 +2033,7 @@
       {
         "Name": "nome",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [
@@ -2077,7 +2077,7 @@
   {
     "ContainingType": "APIHungryHunters.Controllers.RestaurantesController",
     "Method": "RestaurantesporNipc",
-    "RelativePath": "api/Restaurantes/RestaurantesporNipc/{nipc}",
+    "RelativePath": "api/Restaurantes/RestaurantesporNipc",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -2085,7 +2085,7 @@
       {
         "Name": "nipc",
         "Type": "System.String",
-        "IsRequired": true
+        "IsRequired": false
       }
     ],
     "ReturnTypes": [

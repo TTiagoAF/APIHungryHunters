@@ -361,8 +361,8 @@ namespace APIHungryHunters.Controllers
             }
         }
 
-        [HttpGet("BuscarRestaurantepor{id}")]
-        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestaurantes(long id)
+        [HttpGet("BuscarRestaurantepor")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> GetRestaurantes([FromQuery] long id)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -415,8 +415,8 @@ namespace APIHungryHunters.Controllers
            }
        }
 
-        [HttpGet("PesquisaDeRestaurantes{nome}")]
-        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> PesquisaDeRestaurantes(string nome)
+        [HttpGet("PesquisaDeRestaurante")]
+        public async Task<ActionResult<IEnumerable<TodosRestaurantes>>> PesquisaDeRestaurantes([FromQuery] string nome)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -441,8 +441,8 @@ namespace APIHungryHunters.Controllers
             }
         }
 
-        [HttpGet("RestaurantesporNipc/{nipc}")]
-        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> RestaurantesporNipc(string nipc)
+        [HttpGet("RestaurantesporNipc/")]
+        public async Task<ActionResult<IEnumerable<RestaurantesDTO>>> RestaurantesporNipc([FromQuery] string nipc)
         {
             var config = new MapperConfiguration(cfg =>
             {

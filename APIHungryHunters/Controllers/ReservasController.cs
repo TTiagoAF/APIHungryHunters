@@ -27,7 +27,7 @@ namespace APIHungryHunters.Controllers
 
         string conexaodb = "Server=localhost;Port=3306;Database=hungryhunters;Uid=root;";
 
-		[HttpGet("ListadeReservaspor/{IdReservas}")]
+		[HttpGet("ListadeReservasporIdReservas/{IdReservas}")]
 		public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservasporId(int IdReservas)
 		{
 			var config = new MapperConfiguration(cfg =>
@@ -47,8 +47,8 @@ namespace APIHungryHunters.Controllers
 			}
 		}
 
-		[HttpGet("ListadeReservaspor{ContaId}")]
-        public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservasporContaId(int ContaId)
+		[HttpGet("ListadeReservaspor")]
+        public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservasporContaId([FromQuery] int ContaId)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -85,8 +85,8 @@ namespace APIHungryHunters.Controllers
             }
         }
 
-        [HttpGet("ListadeReservascom{RestauranteId}")]
-        public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservascomRestauranteId(int RestauranteId)
+        [HttpGet("ListadeReservascom")]
+        public async Task<ActionResult<IEnumerable<TodasReservasDTO>>> ObterReservascomRestauranteId([FromQuery] int RestauranteId)
         {
             var config = new MapperConfiguration(cfg =>
             {

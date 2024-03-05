@@ -39,7 +39,7 @@ namespace APIHungryHunters.Controllers
                 cfg.CreateMap<Empresas, TodasEmpresasDTO>();
 
                 cfg.CreateMap<Restaurantes, RestaurantesDTO>();
-                   
+
                 cfg.CreateMap<RestauranteMenu, RestauranteMenuDTO>();
             });
 
@@ -106,9 +106,9 @@ namespace APIHungryHunters.Controllers
 
         }
 
-        [HttpGet("Empresaspor{Razao_social}")]
+        [HttpGet("Empresaspor")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<EmpresasDTO>>> GetEmpresasNome(string Razao_social)
+        public async Task<ActionResult<IEnumerable<EmpresasDTO>>> GetEmpresasNome([FromQuery] string Razao_social)
         {
             var config = new MapperConfiguration(cfg =>
             {

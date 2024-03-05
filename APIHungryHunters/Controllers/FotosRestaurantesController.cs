@@ -111,8 +111,8 @@ namespace APIHungryHunters.Controllers
             return BadRequest("A imagem não foi fornecida ou é inválida.");
         }
 
-        [HttpGet("ObterImagensRestaurante/{restauranteId}")]
-        public IActionResult ObterImagensRestaurante(int restauranteId)
+        [HttpGet("ObterImagensRestaurante/")]
+        public IActionResult ObterImagensRestaurante([FromQuery] int restauranteId)
         {
 
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))

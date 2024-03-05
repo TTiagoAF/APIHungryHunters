@@ -64,7 +64,7 @@ namespace APIHungryHunters.Controllers
         }
 
         [HttpGet("ListadeAvaliacoesLimitadacom")]
-        public async Task<ActionResult<IEnumerable<TodasAvaliacoes>>> ObterAvaliacoesLimitadacomRestauranteId(int RestauranteId)
+        public async Task<ActionResult<IEnumerable<TodasAvaliacoes>>> ObterAvaliacoesLimitadacomRestauranteId([FromQuery] int RestauranteId)
         {
             var config = new MapperConfiguration(cfg =>
             {
@@ -99,8 +99,8 @@ namespace APIHungryHunters.Controllers
             }
         }
 
-        [HttpGet("ListadeAvaliacoescom{RestauranteId}")]
-        public async Task<ActionResult<IEnumerable<TodasAvaliacoes>>> ObterAvaliacoescomRestauranteId(int RestauranteId)
+        [HttpGet("ListadeAvaliacoescom")]
+        public async Task<ActionResult<IEnumerable<TodasAvaliacoes>>> ObterAvaliacoescomRestauranteId([FromQuery] int RestauranteId)
         {
             var config = new MapperConfiguration(cfg =>
             {

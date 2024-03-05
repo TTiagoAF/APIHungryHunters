@@ -41,8 +41,8 @@ namespace APIHungryHunters.Controllers
             }
         }
 
-        [HttpGet("ListadeCategoriaspor{RestauranteId}")]
-        public async Task<ActionResult<IEnumerable<CategoriasDTO>>> ObterCategoriasporIdRestaurante(int RestauranteId)
+        [HttpGet("ListadeCategoriaspor")]
+        public async Task<ActionResult<IEnumerable<CategoriasDTO>>> ObterCategoriasporIdRestaurante([FromQuery] int RestauranteId)
         {
             var config = new MapperConfiguration(cfg =>
             {
