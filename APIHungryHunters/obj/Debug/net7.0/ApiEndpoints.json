@@ -303,6 +303,22 @@
   },
   {
     "ContainingType": "APIHungryHunters.Controllers.ContasController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/Contas/ChangePassword",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "changePasswordDTO",
+        "Type": "APIHungryHunters.Models.ChangePasswordDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "APIHungryHunters.Controllers.ContasController",
     "Method": "GetContasPorId",
     "RelativePath": "api/Contas/ContasPor/{id}",
     "HttpMethod": "GET",
@@ -685,6 +701,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "APIHungryHunters.Controllers.EmpresasController",
+    "Method": "ChangePassword",
+    "RelativePath": "api/Empresas/ChangePasswordEmpresas",
+    "HttpMethod": "PUT",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "changePasswordDTO",
+        "Type": "APIHungryHunters.Models.ChagePasswordEmpresasDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "APIHungryHunters.Controllers.EmpresasController",

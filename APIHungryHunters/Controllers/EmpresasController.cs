@@ -212,7 +212,34 @@ namespace APIHungryHunters.Controllers
             return Ok();
         }
 
-        [HttpPost("LoginEmpresas")]
+		[HttpPut("ChangePasswordEmpresas")]
+		public async Task<ActionResult> ChangePassword([FromBody] ChagePasswordEmpresasDTO changePasswordDTO)
+		{
+			try
+			{
+				using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+				{
+					var empresas = await db.SingleOrDefaultAsync<Empresas>("SELECT * FROM empresa WHERE Nipc = @0", changePasswordDTO.Nipc);
+
+					if (empresas == null)
+					{
+						return NotFound($"Não foi encontrada nenhuma empresa com o Nipc: {changePasswordDTO.Nipc}. Insira outro Nipc.");
+					}
+					string hashedPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordDTO.NewPassword);
+					empresas.Password = hashedPassword;
+
+					await db.UpdateAsync("empresa", "Nipc", empresas);
+				}
+
+				return NoContent();
+			}
+			catch (Exception ex)
+			{
+				return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar a senha da conta");
+			}
+		}
+
+		[HttpPost("LoginEmpresas")]
         public async Task<IActionResult> LoginEmpresas([FromBody] LoginEmpresasDTO loginEmpresasDTO)
         {
             using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))

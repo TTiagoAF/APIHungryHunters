@@ -261,7 +261,7 @@ namespace APIHungryHunters.Controllers
                                 Dia = reservaDTO.Data_reserva.Day,
                             });
 
-                    if (validData != null || validData2 != null)
+                    if (validData == null || validData2 != null)
                     {
                         var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
                         return BadRequest(erro5);
@@ -527,7 +527,7 @@ namespace APIHungryHunters.Controllers
                                 Dia = reservaDTO.Data_reserva.Day,
                             });
 
-					if (validData != null || validData2 != null)
+					if (validData == null || validData2 != null)
 					{
                         var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
                         return BadRequest(erro5);

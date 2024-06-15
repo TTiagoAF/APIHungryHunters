@@ -305,7 +305,34 @@ public class ContasController : ControllerBase
         }
     }
 
-    private bool ContasExist(long id)
+	[HttpPut("ChangePassword")]
+	public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDTO)
+	{
+		try
+		{
+			using (var db = new Database(conexaodb, "MySql.Data.MySqlClient"))
+			{
+				var conta = await db.SingleOrDefaultAsync<Contas>("SELECT * FROM contas WHERE Email = @0", changePasswordDTO.Email);
+
+				if (conta == null)
+				{
+					return NotFound($"Não foi encontrada nenhuma conta com o email: {changePasswordDTO.Email}. Insira outro email.");
+				}
+				string hashedPassword = BCrypt.Net.BCrypt.HashPassword(changePasswordDTO.NewPassword);
+				conta.Password = hashedPassword;
+
+				await db.UpdateAsync("contas", "Id_conta", conta);
+			}
+
+			return NoContent();
+		}
+		catch (Exception ex)
+		{
+			return StatusCode(StatusCodes.Status500InternalServerError, "Erro ao atualizar a senha da conta");
+		}
+	}
+
+	private bool ContasExist(long id)
     {
         return _contexto.Contas.Any(e => e.Id_conta == id);
     }
