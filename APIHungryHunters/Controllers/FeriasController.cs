@@ -110,7 +110,7 @@ namespace APIHungryHunters.Controllers
                     }
                     if (feriasDTO.InicioFerias.Year == feriasDTO.FimFerias.Year)
                     {
-                        if (feriasDTO.InicioFerias.Month <= feriasDTO.FimFerias.Month)
+                        if (feriasDTO.InicioFerias.Month == feriasDTO.FimFerias.Month)
                         {
                             if (feriasDTO.InicioFerias.Day > feriasDTO.FimFerias.Day)
                             {
@@ -136,9 +136,9 @@ namespace APIHungryHunters.Controllers
                     }
                     if (feriasDTO.InicioFerias.Year == DateTime.Now.Year || feriasDTO.FimFerias.Year == DateTime.Now.Year)
                     {
-                        if (feriasDTO.InicioFerias.Month <= DateTime.Now.Month || feriasDTO.FimFerias.Month <= DateTime.Now.Month)
+                        if (feriasDTO.InicioFerias.Month <= DateTime.Now.Month)
                         {
-                            if (feriasDTO.InicioFerias.Day < DateTime.Now.Day || feriasDTO.FimFerias.Day < DateTime.Now.Day)
+                            if (feriasDTO.InicioFerias.Day < DateTime.Now.Day)
                             {
                                 var erro5 = new { Mensagem = "Esse dia já passou" };
                                 return BadRequest(erro5);

@@ -222,32 +222,6 @@ namespace APIHungryHunters.Controllers
                         }
                     }
 
-                    var validData = await db.FirstOrDefaultAsync<Reservas>(
-                    "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
-                    "AND YEAR(InicioFerias) = @Ano " +
-                    "AND MONTH(InicioFerias) = @Mes " +
-                    "AND DAY(InicioFerias) >= @Dia",
-                     new
-                     {
-                         reservaDTO.RestauranteId,
-                         Ano = reservaDTO.Data_reserva.Year,
-                         Mes = reservaDTO.Data_reserva.Month,
-                         Dia = reservaDTO.Data_reserva.Day,
-                     });
-
-                    var validData2 = await db.FirstOrDefaultAsync<Reservas>(
-                       "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
-                        "AND YEAR(FimFerias) = @Ano " +
-                        "AND MONTH(FimFerias) = @Mes " +
-                        "AND DAY(FimFerias) <= @Dia",
-                         new
-                         {
-                             reservaDTO.RestauranteId,
-                             Ano = reservaDTO.Data_reserva.Year,
-                             Mes = reservaDTO.Data_reserva.Month,
-                             Dia = reservaDTO.Data_reserva.Day,
-                         });
-
                     var validDia = await db.FirstOrDefaultAsync<Reservas>(
                         "SELECT * FROM diasfestivos WHERE RestauranteId = @RestauranteId " +
                         "AND YEAR(DiaFestivo) = @Ano " +
@@ -261,14 +235,22 @@ namespace APIHungryHunters.Controllers
                                 Dia = reservaDTO.Data_reserva.Day,
                             });
 
-                    if (validData == null || validData2 != null)
-                    {
-                        var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
-                        return BadRequest(erro5);
+					var validData = await db.FirstOrDefaultAsync<Reservas>(
+						"SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
+						"AND @DataReserva BETWEEN InicioFerias AND FimFerias",
+							new
+							{
+								reservaDTO.RestauranteId,
+								DataReserva = reservaDTO.Data_reserva
+							});
 
-                    }
+					if (validData != null)
+					{
+						var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
+						return BadRequest(erro5);
+					}
 
-                    var diasemana = reservaDTO.Data_reserva.DayOfWeek;
+					var diasemana = reservaDTO.Data_reserva.DayOfWeek;
 
                     var validSegunda = await db.FirstOrDefaultAsync<DiasDeFuncionamento>(
                     "SELECT * FROM diasfuncionamento WHERE RestauranteId = @RestauranteId",
@@ -487,32 +469,7 @@ namespace APIHungryHunters.Controllers
                             }
                         }
                     }
-
-                    var validData = await db.FirstOrDefaultAsync<Reservas>(
-                    "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
-                    "AND YEAR(InicioFerias) = @Ano " +
-                    "AND MONTH(InicioFerias) = @Mes " +
-                    "AND DAY(InicioFerias) >= @Dia",
-                     new
-                     {
-                         reservaDTO.RestauranteId,
-                         Ano = reservaDTO.Data_reserva.Year,
-                         Mes = reservaDTO.Data_reserva.Month,
-                         Dia = reservaDTO.Data_reserva.Day,
-                     });
-
-                    var validData2 = await db.FirstOrDefaultAsync<Reservas>(
-                       "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
-                        "AND YEAR(FimFerias) = @Ano " +
-                        "AND MONTH(FimFerias) = @Mes " +
-                        "AND DAY(FimFerias) <= @Dia",
-                         new
-                         {
-                             reservaDTO.RestauranteId,
-                             Ano = reservaDTO.Data_reserva.Year,
-                             Mes = reservaDTO.Data_reserva.Month,
-                             Dia = reservaDTO.Data_reserva.Day,
-                         });
+					
 
                     var validDia = await db.FirstOrDefaultAsync<Reservas>(
                         "SELECT * FROM diasfestivos WHERE RestauranteId = @RestauranteId " +
@@ -527,14 +484,22 @@ namespace APIHungryHunters.Controllers
                                 Dia = reservaDTO.Data_reserva.Day,
                             });
 
-					if (validData == null || validData2 != null)
+					var validData = await db.FirstOrDefaultAsync<Reservas>(
+	                    "SELECT * FROM ferias WHERE RestauranteId = @RestauranteId " +
+	                    "AND @DataReserva BETWEEN InicioFerias AND FimFerias",
+	                        new
+	                        {
+		                        reservaDTO.RestauranteId,
+		                        DataReserva = reservaDTO.Data_reserva
+	                        });
+
+					if (validData != null)
 					{
-                        var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
-                        return BadRequest(erro5);
+						var erro5 = new { Mensagem = "O restaurante está de férias nesta data" };
+						return BadRequest(erro5);
+					}
 
-                    }
-
-                    var diasemana = reservaDTO.Data_reserva.DayOfWeek;
+					var diasemana = reservaDTO.Data_reserva.DayOfWeek;
 
                     var validSegunda = await db.FirstOrDefaultAsync<DiasDeFuncionamento>(
                     "SELECT * FROM diasfuncionamento WHERE RestauranteId = @RestauranteId",
